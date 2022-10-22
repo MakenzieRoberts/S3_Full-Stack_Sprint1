@@ -2,3 +2,4 @@
 - Makenzie Roberts
 - Kara Balsom
 - David Turner
+- Glen May
