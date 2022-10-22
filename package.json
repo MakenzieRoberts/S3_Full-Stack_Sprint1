@@ -1,0 +1,25 @@
+{
+  "name": "weeksix",
+  "version": "1.0.0",
+  "description": "sample github integration with git and VS Code",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prawstho/WeekSix.git"
+  },
+  "keywords": [],
+  "author": "Peter Rawsthorne",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/prawstho/WeekSix/issues"
+  },
+  "homepage": "https://github.com/prawstho/WeekSix#readme",
+  "dependencies": {
+    "crc": "^4.1.1",
+    "date-fns": "^2.29.3",
+    "uuid": "^9.0.0"
+  }
+}

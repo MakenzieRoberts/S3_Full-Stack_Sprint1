@@ -1,0 +1,16 @@
+
+
+myapp <command> <option>
+
+Usage:
+
+myapp token --count                     displays a count of the tokens created
+myapp token --list                      list all the usernames with tokens
+myapp token --new <username>            generates a token for a given username, saves tokens to the json file
+myapp token --upd p <username> <phone>  updates the json entry with phone number
+myapp token --upd e <username> <email>  updates the json entry with email
+myapp token --fetch <username>          fetches a user record for a given username
+myapp token --search u <username>       searches a token for a given username
+myapp token --search e <email>          searches a token for a given email
+myapp token --search p <phone>          searches a token for a given phone number
+
