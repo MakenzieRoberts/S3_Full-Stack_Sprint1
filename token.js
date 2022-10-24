@@ -24,66 +24,78 @@ myapp token --search p <phone>          searches a token for a given phone numbe
  *************************/
 // Add logging to the CLI project by using eventLogging
 // load the logEvents module
-const logEvents = require('./logEvents');
+const logEvents = require("./logEvents");
 
 // define/extend an EventEmitter class
-const EventEmitter = require('events');
-class MyEmitter extends EventEmitter {};
+const EventEmitter = require("events");
+class MyEmitter extends EventEmitter {}
 
 // initialize an new emitter object
 const myEmitter = new MyEmitter();
 // add the listener for the logEvent
-myEmitter.on('log', (event, level, msg) => logEvents(event, level, msg));
+myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
 // Node.js common core global modules
-const fs = require('fs');
-const path = require('path');
-
-const crc32 = require('crc/crc32');
-const { format } = require('date-fns');
+const fs = require("fs");
+const crc32 = require("crc/crc32");
+const { format } = require("date-fns");
 
 const myArgs = process.argv.slice(2);
 
-var tokenCount = function() {
-    if(DEBUG) console.log('token.tokenCount()');
-    return new Promise(function(resolve, reject) {
-        fs.readFile(__dirname + '/json/tokens.json', 'utf-8', (error, data) => {
-            if(error)  
-                reject(error); 
-            else {
-                let tokens = JSON.parse(data);
-                let count = Object.keys(tokens).length;
-                console.log(`Current token count is ${count}.`);
-                myEmitter.emit('log', 'token.tokenCount()', 'INFO', `Current token count is ${count}.`);
-                resolve(count);
-            };
-        });
+let tokenCount = function () {
+  if (DEBUG) console.log("token.tokenCount()");
+  return new Promise(function (resolve, reject) {
+    fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
+      if (error) reject(error);
+      else {
+        let tokens = JSON.parse(data);
+        let count = Object.keys(tokens).length;
+        console.log(`Current token count is ${count}.`);
+        myEmitter.emit(
+          "log",
+          "token.tokenCount()",
+          "INFO",
+          `Current token count is ${count}.`
+        );
+        resolve(count);
+      }
     });
+  });
 };
 
 function tokenList() {
-    if(DEBUG) console.log('token.tokenList()');
-    fs.readFile(__dirname + '/json/tokens.json', 'utf-8', (error, data) => {
-        if(error) throw error; 
-        let tokens = JSON.parse(data);
-        console.log('** User List **')
-        tokens.forEach(obj => {
-            console.log(' * ' + obj.username + ': ' + obj.token);
-        });
-        myEmitter.emit('log', 'token.tokenList()', 'INFO', `Current token list was displayed.`);
+  if (DEBUG) console.log("token.tokenList()");
+  fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
+    if (error) throw error;
+    let tokens = JSON.parse(data);
+    console.log("** User List **");
+    tokens.forEach((obj) => {
+      console.log(" * " + obj.username + ": " + obj.token);
     });
-};
+    myEmitter.emit(
+      "log",
+      "token.tokenList()",
+      "INFO",
+      `Current token list was displayed.`
+    );
+  });
+}
 
 function addDays(date, days) {
-    var result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
+  var result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
 }
 function newToken(username) {
-    if(DEBUG) console.log('token.newToken()');
+  if (DEBUG) console.log("token.newToken()");
+  // if username already exists, {
+  //
+  // find username, return token object
+  //}
 
-    let newToken = JSON.parse(`{
-        "created": "1969-01-31 12:30:00",
+  //else
+  let newToken = JSON.parse(`{
+        "created": "1969-01-31 12:30:00", 
         "username": "username",
         "email": "user@example.com",
         "phone": "5556597890",
@@ -92,75 +104,89 @@ function newToken(username) {
         "confirmed": "tbd"
     }`);
 
-    let now = new Date();
-    let expires = addDays(now, 3);
+  let now = new Date();
+  let expires = addDays(now, 3);
 
-    newToken.created = `${format(now, 'yyyy-MM-dd HH:mm:ss')}`;
-    newToken.username = username;
-    newToken.token = crc32(username).toString(16);
-    newToken.expires = `${format(expires, 'yyyy-MM-dd HH:mm:ss')}`;
-    newToken.under = "under";
+  newToken.username = username;
 
-    fs.readFile(__dirname + '/json/tokens.json', 'utf-8', (error, data) => {
-        if(error) throw error; 
-        let tokens = JSON.parse(data);
-        tokens.push(newToken);
-        userTokens = JSON.stringify(tokens);
-    
-        fs.writeFile(__dirname + '/json/tokens.json', userTokens, (err) => {
-            if (err) console.log(err);
-            else { 
-                console.log(`New token ${newToken.token} was created for ${username}.`);
-                myEmitter.emit('log', 'token.newToken()', 'INFO', `New token ${newToken.token} was created for ${username}.`);
-            }
-        })
-        
+  newToken.created = `${format(now, "yyyy-MM-dd HH:mm:ss")}`;
+  newToken.token = crc32(username).toString(16);
+  newToken.expires = `${format(expires, "yyyy-MM-dd HH:mm:ss")}`;
+
+  fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
+    if (error) throw error;
+    let tokens = JSON.parse(data);
+    tokens.push(newToken);
+    userTokens = JSON.stringify(tokens);
+
+    fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
+      if (err) console.log(err);
+      else {
+        console.log(`New token ${newToken.token} was created for ${username}.`);
+        myEmitter.emit(
+          "log",
+          "token.newToken()",
+          "INFO",
+          `New token ${newToken.token} was created for ${username}.`
+        );
+      }
     });
-    return newToken.token;
+  });
+  return newToken.token;
 }
 function tokenApp() {
-    if(DEBUG) console.log('tokenApp()');
-    myEmitter.emit('log', 'token.tokenApp()', 'INFO', 'token option was called by CLI');
+  if (DEBUG) console.log("tokenApp()");
+  myEmitter.emit(
+    "log",
+    "token.tokenApp()",
+    "INFO",
+    "token option was called by CLI"
+  );
 
-    switch (myArgs[1]) {
-    case '--count':
-        if(DEBUG) console.log('token.tokenCount() --count');
-        tokenCount();
-        break;
-    case '--list':
-        if(DEBUG) console.log('token.tokenList() --list');
-        tokenList();
-        break; 
-    case '--new':
-        if(DEBUG) console.log('token.newToken() --new');
-        newToken(myArgs[2]);
-        break;
-    case '--upd':
-        if(DEBUG) console.log('token.updateToken()');
-    //    updateToken(myArgs);
-        break;
-    case '--fetch':
-        if(DEBUG) console.log('token.fetchToken');
-    //    fetchRecord(myArgs[2]);
-        break;
-    case '--search':
-        if(DEBUG) console.log('token.searchToken()');
-    //    searchToken();
-        break;
-    case '--help':
-    case '--h':
+  switch (myArgs[1]) {
+    case "--count":
+      if (DEBUG) console.log("token.tokenCount() --count");
+      tokenCount();
+      break;
+    case "--list":
+      if (DEBUG) console.log("token.tokenList() --list");
+      tokenList();
+      break;
+    case "--new":
+      if (DEBUG) console.log("token.newToken() --new");
+      newToken(myArgs[2]);
+      break;
+    case "--upd":
+      if (DEBUG) console.log("token.updateToken()");
+      //    updateToken(myArgs);
+      break;
+    case "--fetch":
+      if (DEBUG) console.log("token.fetchToken");
+      //    fetchRecord(myArgs[2]);
+      break;
+    case "--search":
+      if (DEBUG) console.log("token.searchToken()");
+      //    searchToken();
+      break;
+    case "--help":
+    case "--h":
     default:
-        fs.readFile(__dirname + "/views/token.txt", (error, data) => {
-            if(error) throw error;              
-            console.log(data.toString());
-        });
-        myEmitter.emit('log', 'token.tokenApp()', 'INFO', 'invalid CLI option, usage displayed');
-    }
+      fs.readFile(__dirname + "/views/token.txt", (error, data) => {
+        if (error) throw error;
+        console.log(data.toString());
+      });
+      myEmitter.emit(
+        "log",
+        "token.tokenApp()",
+        "INFO",
+        "invalid CLI option, usage displayed"
+      );
+  }
 }
 
 module.exports = {
-    tokenApp,
- //   newToken,
-    tokenCount,
- //   fetchRecord,
-  }
+  tokenApp,
+  newToken,
+  tokenCount,
+  //   fetchRecord,
+};

@@ -67,4 +67,6 @@ switch (myArgs[0]) {
       if (error) throw error;
       console.log(data.toString());
     });
+
+  // Handle token expiration date
 }
