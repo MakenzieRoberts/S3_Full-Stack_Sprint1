@@ -1,0 +1,45 @@
+body {
+	background-color: #cce6ff;
+	margin: auto;
+	text-align: center;
+}
+
+header {
+	text-align: center;
+	background-color: #3399ff;
+	color: #ffffff;
+	font-size: x-large;
+}
+
+h1 {
+	padding: 0;
+	margin: 0;
+}
+h3 {
+	margin-top: 2px;
+	text-align: center;
+	background-color: #80bfff;
+}
+
+form {
+	width: clamp(240px, 60%, 400px);
+	display: inline-block;
+
+	padding: 20px;
+}
+
+label {
+	text-align: center;
+	width: 100%;
+}
+
+input {
+	width: clamp(80%, 50%, 50%);
+	margin: auto;
+	margin: 10px;
+}
+
+footer {
+	margin-top: 3%;
+	text-align: center;
+}
