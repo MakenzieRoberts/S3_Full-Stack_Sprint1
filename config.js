@@ -29,6 +29,7 @@ function setConfig() {
       if (key === myArgs[2]) {
         cfg[key] = myArgs[3];
         match = true;
+        console.log(key);
       }
     }
     if (!match) {
@@ -55,6 +56,30 @@ function setConfig() {
     }
   });
 }
+
+function newConfig() {
+  if (DEBUG) console.log("config.setConfig()");
+  if (DEBUG) console.log(myArgs);
+  fs.readFile(__dirname + "/json/config.json", (error, data) => {
+    if (error) throw error;
+    if (DEBUG) console.log(JSON.parse(data));
+    let att = JSON.parse(data);
+    let key = myArgs[2];
+    att[key] = "";
+    data = JSON.stringify(att, null, 2);
+    fs.writeFile(__dirname + "/json/config.json", data, (error) => {
+      if (error) throw error;
+      console.log("Config file successfully updated.");
+      myEmitter.emit(
+        "log",
+        "config.setConfig()",
+        "INFO",
+        `config.json "${myArgs[2]}": updated`
+      );
+    });
+  });
+}
+
 function resetConfig() {
   if (DEBUG) console.log("config.resetConfig()");
   let configdata = JSON.stringify(configjson, null, 2);
@@ -69,6 +94,7 @@ function resetConfig() {
     );
   });
 }
+
 function displayConfig() {
   if (DEBUG) console.log("config.displayConfig()");
   fs.readFile(__dirname + "/json/config.json", (error, data) => {
@@ -104,6 +130,10 @@ function configApp() {
     case "--set":
       if (DEBUG) console.log("--set");
       setConfig();
+      break;
+    case "--new":
+      if (DEBUG) console.log("--new");
+      newConfig();
       break;
     case "--help":
     case "--h":
