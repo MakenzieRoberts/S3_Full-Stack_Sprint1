@@ -132,23 +132,33 @@ function newToken(username) {
   return newToken.token;
 }
 
-function existCheck(username){
+// Checks for existing token and returns ___?
+const existCheck = (username)=>{
+  if (DEBUG) console.log("token.existCheck()");
+
   let tokenExists = false;
+
   fs.readFile(__dirname + "/json/tokens.json", "utf8", (error, data) => {
     if (error) throw error;
-    const tokens = JSON.parse(data); // Parse JSON to string
+    const tokens = JSON.parse(data); 
     for (let i = 0; i < tokens.length; i ++){
       if (tokens[i].username == username){
+        console.log(tokens[i].username)
         tokenExists = true;
         console.log("Token already issued")
-        console.log(tokens[i])
-        return tokenExists
+        console.log(tokenExists)
+        return tokenExists;
       }
-      return tokenExists;
     }
-})};
+    return tokenExists;
+  })
+};
 
-const expiryCheck = () =>{
+// Checks for expired tokens and removes them from the database
+// TODO: does not run at same time as calling newToken
+const expiryCheck = () => {
+  if (DEBUG) console.log("token.expiryCheck()");
+
   // Find tokens json file
   fs.readFile(__dirname + "/json/tokens.json", "utf8", (error, data) => {
     if (error) throw error;
@@ -163,7 +173,9 @@ const expiryCheck = () =>{
     userTokens = JSON.stringify(tokens) 
     fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
     if (err) throw err;
-})});}
+    })
+  })
+}
 
 
 

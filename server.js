@@ -18,19 +18,22 @@ app.get("/", function (req, res) {
 });
 
 // This function retrieves the username and password from the form
-const getUser = (request, response) => {
-  const username = request.query.username;
-  let result = existCheck(username);
-  console.log(`Check test result: ${result}`)
-  // if (result === false ){
-    const token = newToken(username);
-    console.log("(server.js) - Username Retrieved: " + username);
-    response.status(200).send(token);
-  // }else{
-  //   const token = result;
-  //   response.status(200).send(token)
-  // }
-;}
+const getUser = async(req, res) => {
+  const username = req.query.username;
+   let response = await existCheck(username)
+    console.log(` Type of: ${typeof response}`);
+    console.log(`Check test result: ${response}`)
+      if (response === false ){
+        const token = newToken(username);
+        console.log("(server.js) - Username Retrieved: " + username);
+        res.status(200).send(token);
+      }else{
+        const token = response;
+        res.status(200).send(token)
+      }
+  }
+  
+
 
 app.get("/view", getUser);
 
