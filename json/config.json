@@ -4,5 +4,5 @@
   "description": "The Command Line Interface (CLI) for the MyApp.",
   "main": "myapp.js",
   "superuser": "adm1n",
-  "database": "name"
+  "database": "group2"
 }
