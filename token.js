@@ -82,19 +82,16 @@ function tokenList() {
 }
 
 function addDays(date, days) {
-  var result = new Date(date);
+  let result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
 }
+
+
 function newToken(username) {
   if (DEBUG) console.log("token.newToken()");
-  // if username already exists, {
-  //
-  // find username, return token object
-  //}
 
-  //else
-  let newToken = JSON.parse(`{
+    let newToken = JSON.parse(`{
         "created": "1969-01-31 12:30:00", 
         "username": "username",
         "email": "user@example.com",
@@ -134,6 +131,44 @@ function newToken(username) {
   });
   return newToken.token;
 }
+
+function existCheck(username){
+  let tokenExists = false;
+  fs.readFile(__dirname + "/json/tokens.json", "utf8", (error, data) => {
+    if (error) throw error;
+    const tokens = JSON.parse(data); // Parse JSON to string
+    for (let i = 0; i < tokens.length; i ++){
+      if (tokens[i].username == username){
+        tokenExists = true;
+        console.log("Token already issued")
+        console.log(tokens[i])
+        
+      }
+      return tokenExists;
+    }
+})};
+
+const expiryCheck = () =>{
+  // Find tokens json file
+  fs.readFile(__dirname + "/json/tokens.json", "utf8", (error, data) => {
+    if (error) throw error;
+    let today = new Date(); 
+    todayStr = Date.parse(today); // Convert todays date to ISO format
+    const tokens = JSON.parse(data); // Parse JSON to string
+    for (let i = 0; i < tokens.length; i ++){
+      let tokenExp = Date.parse(tokens[i].expires) // Convert token expiry dates to ISO format
+      if (tokenExp + 259200000 <= todayStr){ // Check if expiry date has elapsed
+        tokens.splice(i, 1)} // Remove the element from tokens 
+    }
+    userTokens = JSON.stringify(tokens) 
+    fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
+    if (err) throw err;
+})});}
+
+
+
+
+
 function tokenApp() {
   if (DEBUG) console.log("tokenApp()");
   myEmitter.emit(
@@ -184,9 +219,14 @@ function tokenApp() {
   }
 }
 
+
+
 module.exports = {
   tokenApp,
   newToken,
   tokenCount,
+  addDays,
+  expiryCheck,
+  existCheck
   //   fetchRecord,
 };
