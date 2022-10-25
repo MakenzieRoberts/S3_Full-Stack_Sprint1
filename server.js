@@ -21,16 +21,16 @@ app.get("/", function (req, res) {
 const getUser = async(req, res) => {
   const username = req.query.username;
    let response = await existCheck(username)
-    console.log(` Type of: ${typeof response}`);
-    console.log(`Check test result: ${response}`)
-      if (response === false ){
-        const token = newToken(username);
-        console.log("(server.js) - Username Retrieved: " + username);
-        res.status(200).send(token);
-      }else{
+    // console.log(` Type of: ${typeof response}`);
+    // console.log(`Check test result: ${response}`)
+    //   if (response === false ){
+    //     const token = newToken(username);
+    //     console.log("(server.js) - Username Retrieved: " + username);
+    //     res.status(200).send(token);
+    //   }else{
         const token = response;
         res.status(200).send(token)
-      }
+      // }
   }
   
 

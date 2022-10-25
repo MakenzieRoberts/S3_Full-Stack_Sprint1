@@ -201,6 +201,7 @@ function tokenApp() {
       break;
     case "--new":
       if (DEBUG) console.log("token.newToken() --new");
+      expiryCheck();
       newToken(myArgs[2]);
       break;
     case "--upd":
