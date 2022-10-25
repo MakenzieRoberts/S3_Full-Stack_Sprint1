@@ -66,17 +66,14 @@ function addDays(date, days) {
 
 async function newToken(username) {
   if (DEBUG) console.log("token.newToken()");
+
   let result = await existCheck(username);
-  console.log(`Check test result: ${result}`);
 
   // Change this below:
   if (result[0] == true) {
-    const token = result[1];
+    console.log(`Token already exists. Please use ${result[1].token}`);
   } else {
-    const token = result[1];
-  }
-
-  let newToken = JSON.parse(`{
+    let newToken = JSON.parse(`{
         "created": "1969-01-31 12:30:00", 
         "username": "username",
         "email": "user@example.com",
@@ -86,69 +83,39 @@ async function newToken(username) {
         "confirmed": "tbd"
     }`);
 
-  let now = new Date();
-  let expires = addDays(now, 3);
+    let now = new Date();
+    let expires = addDays(now, 3);
 
-  newToken.username = username;
+    newToken.username = username;
 
-  newToken.created = `${format(now, "yyyy-MM-dd HH:mm:ss")}`;
-  newToken.token = crc32(username).toString(16);
-  newToken.expires = `${format(expires, "yyyy-MM-dd HH:mm:ss")}`;
+    newToken.created = `${format(now, "yyyy-MM-dd HH:mm:ss")}`;
+    newToken.token = crc32(username).toString(16);
+    newToken.expires = `${format(expires, "yyyy-MM-dd HH:mm:ss")}`;
 
-  fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
-    if (error) throw error;
-    let tokens = JSON.parse(data);
-    tokens.push(newToken);
-    userTokens = JSON.stringify(tokens);
+    fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
+      if (error) throw error;
+      let tokens = JSON.parse(data);
+      tokens.push(newToken);
+      let userTokens = JSON.stringify(tokens);
 
-    fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
-      if (err) console.log(err);
-      else {
-        console.log(`New token ${newToken.token} was created for ${username}.`);
-        myEmitter.emit(
-          "log",
-          "token.newToken()",
-          "INFO",
-          `New token ${newToken.token} was created for ${username}.`
-        );
-      }
+      fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
+        if (err) console.log(err);
+        else {
+          console.log(
+            `New token ${newToken.token} was created for ${username}.`
+          );
+          myEmitter.emit(
+            "log",
+            "token.newToken()",
+            "INFO",
+            `New token ${newToken.token} was created for ${username}.`
+          );
+        }
+      });
     });
-  });
-  return newToken.token;
+    return newToken.token;
+  }
 }
-
-// // Checks for existing token and returns ___?
-// const existCheck = async (username) => {
-//   if (DEBUG) console.log("tokens.existCheck()");
-
-//   try {
-//     let tokenExists = false;
-//     fsPromises.readFile(
-//       __dirname + "/json/tokens.json",
-//       "utf8",
-//       (error, data) => {
-//         if (error) throw error;
-
-//         const tokens = JSON.parse(data);
-//         let arr = [];
-//         for (let i = 0; i < tokens.length; i++) {
-//           if (tokens[i].username == username) {
-//             console.log(tokens[i].username);
-//             tokenExists = true;
-//             existingToken = token[i].token;
-//             console.log("Token already issued");
-//             console.log(`Token exists: ${tokenExists}`);
-//             arr.push(tokenExists, existingToken);
-//             return arr;
-//           }
-//         }
-//       }
-//     );
-//   } catch (err) {
-//     throw err;
-//   }
-//   return tokenExists;
-// };
 
 // Checks for existing token and returns ___?
 const existCheck = async (username) => {
@@ -165,9 +132,7 @@ const existCheck = async (username) => {
       let tokenUsername = tokens[i].username;
       if (tokenUsername == username) {
         tokenExists = true;
-        existingToken = tokens[i].token;
-        console.log("Token already issued");
-        console.log(`Token exists: ${tokenExists}`);
+        existingToken = tokens[i];
         arr.push(tokenExists, existingToken);
         return arr;
       }
@@ -205,6 +170,38 @@ const expiryCheck = () => {
   });
 };
 
+const fetchRecord = async function (record) {
+  let arr = [];
+  console.log(record);
+  let result = await existCheck(record);
+  if (result[0] == false) {
+    console.log("Record does not exist");
+    console.log(result);
+  } else {
+    let username = result[1].username;
+    let created = result[1].created;
+    let email = result[1].email;
+    let phone = result[1].phone;
+    let token = result[1].token;
+    let expires = result[1].expires;
+    let confirmed = result[1].confirmed;
+    console.log(username);
+    let rec = `Username: ${username}, Created: ${created}, Email: ${email}, Phone: ${phone}, Token: ${token}, Expires: ${expires}, Confirmed: ${confirmed}`;
+
+    return rec;
+  }
+  // return "Kara";
+};
+
+const searchRecord = async function (record) {
+  console.log(record);
+  let result = await existCheck(record);
+  if (result[0] == false) {
+    console.log("Record does not exist");
+    console.log(result);
+  } else console.log(result[1].token);
+};
+
 function tokenApp() {
   if (DEBUG) console.log("tokenApp()");
   myEmitter.emit(
@@ -229,17 +226,13 @@ function tokenApp() {
       expiryCheck();
       newToken(myArgs[2]);
       break;
-    case "--upd":
-      if (DEBUG) console.log("token.updateToken()");
-      //    updateToken(myArgs);
-      break;
     case "--fetch":
-      if (DEBUG) console.log("token.fetchToken");
-      //    fetchRecord(myArgs[2]);
+      if (DEBUG) console.log("token.fetchRecord");
+      fetchRecord(myArgs[2]);
       break;
     case "--search":
       if (DEBUG) console.log("token.searchToken()");
-      //    searchToken();
+      searchRecord(myArgs[3]);
       break;
     case "--help":
     case "--h":
@@ -265,5 +258,6 @@ module.exports = {
   expiryCheck,
   existCheck,
   arr,
-  //   fetchRecord,
+  fetchRecord,
+  searchRecord,
 };

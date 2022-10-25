@@ -11,6 +11,8 @@ const {
   expiryCheck,
   existCheck,
   arr,
+  fetchRecord,
+  searchRecord,
 } = require("./token.js");
 
 const server = http.createServer(app);
@@ -30,15 +32,48 @@ const getUser = async (req, res) => {
   console.log(`Check test result: ${result}`);
 
   if (result[0] == false) {
-    const token = newToken(username);
+    const token = await newToken(username);
     console.log("(server.js) - Username Retrieved: " + username);
-    res.status(200).send(token);
+    res.status(200).send(`Your token is: ${token}`);
   } else {
-    const token = result[1];
-    res.status(200).send(token);
+    const token = result[1].token;
+    res.status(200).send(`Your token is: ${token}`);
   }
 };
+
+const getRecord = async (req, res) => {
+  const username = req.query.username;
+  let result = await existCheck(username);
+  console.log(`Check test result: ${result}`);
+
+  if (result[0] == false) {
+    console.log("(server.js) - Username NOT RETRIEVED: " + username);
+    res.status(200).send(`No record found`);
+  } else {
+    const data = await fetchRecord(username);
+    console.log(data);
+    res.status(200).send(`The Record is: ${data}`);
+  }
+};
+
+const getToken = async (req, res) => {
+  const username = req.query.username;
+  let result = await existCheck(username);
+  console.log(`Check test result: ${result}`);
+
+  if (result[0] == false) {
+    const token = await searchRecord(username);
+    console.log("(server.js) - Username Retrieved: " + username);
+    res.status(200).send(`Your token is: ${token}`);
+  } else {
+    const token = result[1].token;
+    res.status(200).send(`Your token is: ${token}`);
+  }
+};
+
 app.get("/view", getUser);
+app.get("/fetch", getRecord);
+app.get("/token", getToken);
 
 server.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`);
