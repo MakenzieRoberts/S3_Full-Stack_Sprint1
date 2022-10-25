@@ -142,7 +142,7 @@ function existCheck(username){
         tokenExists = true;
         console.log("Token already issued")
         console.log(tokens[i])
-        
+        return tokenExists
       }
       return tokenExists;
     }

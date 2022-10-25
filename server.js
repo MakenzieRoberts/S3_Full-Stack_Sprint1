@@ -21,16 +21,16 @@ app.get("/", function (req, res) {
 const getUser = (request, response) => {
   const username = request.query.username;
   let result = existCheck(username);
-  console.log(result)
-  if (result === false ){
-    console.log(result)
+  console.log(`Check test result: ${result}`)
+  // if (result === false ){
     const token = newToken(username);
     console.log("(server.js) - Username Retrieved: " + username);
     response.status(200).send(token);
-  }else{
-    const token = result;
-  response.status(200).send(token)
-};}
+  // }else{
+  //   const token = result;
+  //   response.status(200).send(token)
+  // }
+;}
 
 app.get("/view", getUser);
 
