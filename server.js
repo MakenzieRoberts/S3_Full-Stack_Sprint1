@@ -27,16 +27,14 @@ app.get("/", function (req, res) {
 const getUser = async (req, res) => {
   const username = req.query.username;
   let result = await existCheck(username);
-  console.log(` Type of: ${typeof result}`);
   console.log(`Check test result: ${result}`);
-  if (result === false) {
+
+  if (result[0] == false) {
     const token = newToken(username);
     console.log("(server.js) - Username Retrieved: " + username);
-    tokenCount();
-    let count = await arr;
-    res.status(200).send(count);
+    res.status(200).send(token);
   } else {
-    const token = result;
+    const token = result[1];
     res.status(200).send(token);
   }
 };

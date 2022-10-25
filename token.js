@@ -64,8 +64,17 @@ function addDays(date, days) {
   return result;
 }
 
-function newToken(username) {
+async function newToken(username) {
   if (DEBUG) console.log("token.newToken()");
+  let result = await existCheck(username);
+  console.log(`Check test result: ${result}`);
+
+  // Change this below:
+  if (result[0] == true) {
+    const token = result[1];
+  } else {
+    const token = result[1];
+  }
 
   let newToken = JSON.parse(`{
         "created": "1969-01-31 12:30:00", 
@@ -108,35 +117,67 @@ function newToken(username) {
   return newToken.token;
 }
 
+// // Checks for existing token and returns ___?
+// const existCheck = async (username) => {
+//   if (DEBUG) console.log("tokens.existCheck()");
+
+//   try {
+//     let tokenExists = false;
+//     fsPromises.readFile(
+//       __dirname + "/json/tokens.json",
+//       "utf8",
+//       (error, data) => {
+//         if (error) throw error;
+
+//         const tokens = JSON.parse(data);
+//         let arr = [];
+//         for (let i = 0; i < tokens.length; i++) {
+//           if (tokens[i].username == username) {
+//             console.log(tokens[i].username);
+//             tokenExists = true;
+//             existingToken = token[i].token;
+//             console.log("Token already issued");
+//             console.log(`Token exists: ${tokenExists}`);
+//             arr.push(tokenExists, existingToken);
+//             return arr;
+//           }
+//         }
+//       }
+//     );
+//   } catch (err) {
+//     throw err;
+//   }
+//   return tokenExists;
+// };
+
 // Checks for existing token and returns ___?
 const existCheck = async (username) => {
   if (DEBUG) console.log("tokens.existCheck()");
-
   let tokenExists = false;
+  let arr = [];
   try {
-    fsPromises.readFile(
+    const readTokens = await fsPromises.readFile(
       __dirname + "/json/tokens.json",
-      "utf8",
-      (error, data) => {
-        if (error) throw error;
-
-        const tokens = JSON.parse(data);
-
-        for (let i = 0; i < tokens.length; i++) {
-          if (tokens[i].username == username) {
-            console.log(tokens[i].username);
-            tokenExists = true;
-            console.log("Token already issued");
-            console.log(`Token exists: ${tokenExists}`);
-            return tokenExists;
-          }
-        }
-      }
+      "utf8"
     );
+    const tokens = JSON.parse(readTokens);
+    for (let i = 0; i < tokens.length; i++) {
+      let tokenUsername = tokens[i].username;
+      if (tokenUsername == username) {
+        tokenExists = true;
+        existingToken = tokens[i].token;
+        console.log("Token already issued");
+        console.log(`Token exists: ${tokenExists}`);
+        arr.push(tokenExists, existingToken);
+        return arr;
+      }
+      tokenExists = false;
+    }
   } catch (err) {
     throw err;
   }
-  return tokenExists;
+  arr.push(tokenExists);
+  return arr;
 };
 
 // Checks for expired tokens and removes them from the database
@@ -184,6 +225,7 @@ function tokenApp() {
       break;
     case "--new":
       if (DEBUG) console.log("token.newToken() --new");
+      existCheck();
       expiryCheck();
       newToken(myArgs[2]);
       break;
