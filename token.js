@@ -190,7 +190,6 @@ const fetchRecord = async function (record) {
 
     return rec;
   }
-  // return "Kara";
 };
 
 const searchRecord = async function (record) {
