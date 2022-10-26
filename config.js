@@ -37,7 +37,7 @@ function setConfig() {
       myEmitter.emit(
         "log",
         "config.setConfig()",
-        "WARNING",
+        "CONFIG_WARNING",
         `invalid key: ${myArgs[2]}`
       );
     } else {
@@ -49,7 +49,7 @@ function setConfig() {
         myEmitter.emit(
           "log",
           "config.setConfig()",
-          "INFO",
+          "CONFIG_INFO",
           `config.json "${myArgs[2]}": updated to "${myArgs[3]}"`
         );
       });
@@ -73,7 +73,7 @@ function newConfig() {
       myEmitter.emit(
         "log",
         "config.setConfig()",
-        "INFO",
+        "CONFIG_INFO",
         `config.json "${myArgs[2]}": updated`
       );
     });
@@ -89,7 +89,7 @@ function resetConfig() {
     myEmitter.emit(
       "log",
       "config.resetConfig()",
-      "INFO",
+      "CONFIG_INFO",
       "config.json reset to original state."
     );
   });
@@ -104,7 +104,7 @@ function displayConfig() {
   myEmitter.emit(
     "log",
     "config.displayConfig()",
-    "INFO",
+    "CONFIG_INFO",
     "config.json displayed"
   );
 }
