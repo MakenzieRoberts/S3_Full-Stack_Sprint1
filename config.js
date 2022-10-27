@@ -45,12 +45,12 @@ function setConfig() {
       data = JSON.stringify(cfg, null, 2);
       fs.writeFile(__dirname + "/json/config.json", data, (error) => {
         if (error) throw error;
-        console.log("Config file successfully updated.");
+        console.log("Attribute value in Config file successfully updated.");
         myEmitter.emit(
           "log",
           "config.setConfig()",
           "CONFIG_INFO",
-          `config.json "${myArgs[2]}": updated to "${myArgs[3]}"`
+          `config.json "${myArgs[2]}": value updated to "${myArgs[3]}"`
         );
       });
     }
@@ -58,7 +58,7 @@ function setConfig() {
 }
 
 function newConfig() {
-  if (DEBUG) console.log("config.setConfig()");
+  if (DEBUG) console.log("config.newConfig()");
   if (DEBUG) console.log(myArgs);
   fs.readFile(__dirname + "/json/config.json", (error, data) => {
     if (error) throw error;
@@ -72,9 +72,9 @@ function newConfig() {
       console.log("Config file successfully updated.");
       myEmitter.emit(
         "log",
-        "config.setConfig()",
+        "config.newConfig()",
         "CONFIG_INFO",
-        `config.json "${myArgs[2]}": updated`
+        `config.json "${myArgs[2]}": attribute added`
       );
     });
   });
