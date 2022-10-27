@@ -123,7 +123,7 @@ async function newToken(username) {
         }
       });
     });
-    return newToken.token;
+    return newToken;
   }
 }
 

@@ -5,7 +5,14 @@ const tokenController = require("../../controllers/tokenController");
 router
   .route("/")
   .post(tokenController.createUser)
-  .get(tokenController.fetchRecord)
-  .get(tokenController.getToken)
+;
 
+router
+  .route("/fetch")
+  .get(tokenController.fetchRecord)
+;
+
+router
+  .route("/tokens")
+  .get(tokenController.getToken)
 module.exports = router;

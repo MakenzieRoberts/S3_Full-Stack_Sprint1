@@ -1,45 +1,37 @@
 const { compareDesc } = require("date-fns");
 const {
   newToken,
-  existCheck,
   getRecord,
   searchToken,
 } = require("../token.js");
 
+const data = {
+  ads: require("../json/tokens.json"),
+  setAds: function (data) {
+    this.ads = data;
+  },
+};
+
 
 //  Creates a new user 
 const createUser = async (req, res) => {
-    const username = req.query.username;
-    const result = newToken(username)
-    if (result[0] == false) {
-      const token = await newToken(username);
-      console.log("(server.js) - Username Retrieved: " + username);
-      res.status(200).send(`Your token is: ${token}`);
-    } else {
-      const token = result[1].token;
-      res.status(200).send(`Your token is: ${token}`);
-    }
+    const username = req.body.username;
+    const result = await newToken(username)
+    res.status(200).send(result);
   };
 
 // Returns existing user data
 const fetchRecord = async (req, res) => {
   const username = req.query.username;
   const result = await getRecord(username);
-  record = result
-  res.status(200).send(record); 
+  res.status(200).send(result); 
 };
 
 // Returns a token for supplied username
 const getToken = async (req, res) => {
   const username = req.query.username;
-  const result =  searchToken(username)
-  if (!result[1]) { // First index is always boolean
-    console.log("Token does not exist.")
-  } else {
-    const token = result[1].token; // Second index contains object if user already exists
-    console.log(`Token already exists: ${token}`)
-    res.status(200).send(`Your token is: ${token}`);
-  }
+  const result =  await searchToken(username)
+    res.status(200).json(result);
 };
 
 module.exports = {
