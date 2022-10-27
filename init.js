@@ -28,7 +28,7 @@ function createFiles() {
         myEmitter.emit(
           "log",
           "init.createFiles()",
-          "INFO",
+          "INIT_INFO",
           "config.json successfully created."
         );
       });
@@ -36,7 +36,7 @@ function createFiles() {
       myEmitter.emit(
         "log",
         "init.createFiles()",
-        "INFO",
+        "INIT_WARNING",
         "config.json already exists."
       );
     }
@@ -47,7 +47,7 @@ function createFiles() {
         myEmitter.emit(
           "log",
           "init.createFiles()",
-          "INFO",
+          "INIT_INFO",
           "tokens.json successfully created."
         );
       });
@@ -55,7 +55,7 @@ function createFiles() {
       myEmitter.emit(
         "log",
         "init.createFiles()",
-        "INFO",
+        "INIT_WARNING",
         "token.json already exists."
       );
     }
@@ -65,7 +65,7 @@ function createFiles() {
         myEmitter.emit(
           "log",
           "init.createFiles()",
-          "INFO",
+          "INIT_INFO",
           "./views/usage.txt successfully created."
         );
       });
@@ -73,7 +73,7 @@ function createFiles() {
       myEmitter.emit(
         "log",
         "init.createFiles()",
-        "INFO",
+        "INIT_WARNING",
         "./views/usage.txt already exists."
       );
     }
@@ -83,7 +83,7 @@ function createFiles() {
         myEmitter.emit(
           "log",
           "init.createFiles()",
-          "INFO",
+          "INIT_INFO",
           "./views/init.txt successfully created."
         );
       });
@@ -91,7 +91,7 @@ function createFiles() {
       myEmitter.emit(
         "log",
         "init.createFiles()",
-        "INFO",
+        "INIT_WARNING",
         "./views/init.txt already exists."
       );
     }
@@ -101,7 +101,7 @@ function createFiles() {
         myEmitter.emit(
           "log",
           "init.createFiles()",
-          "INFO",
+          "INIT_INFO",
           "./views/config.txt successfully created."
         );
       });
@@ -109,7 +109,7 @@ function createFiles() {
       myEmitter.emit(
         "log",
         "init.createFiles()",
-        "INFO",
+        "INIT_WARNING",
         "./views/config.txt already exists."
       );
     }
@@ -119,7 +119,7 @@ function createFiles() {
         myEmitter.emit(
           "log",
           "init.createFiles()",
-          "INFO",
+          "INIT_INFO",
           "./views/token.txt successfully created."
         );
       });
@@ -127,7 +127,7 @@ function createFiles() {
       myEmitter.emit(
         "log",
         "init.createFiles()",
-        "INFO",
+        "INIT_WARNING",
         "./views/token.txt already exists."
       );
     }
@@ -183,6 +183,12 @@ function initializeApp() {
         if (error) throw error;
         console.log(data.toString());
       });
+      myEmitter.emit(
+        "log",
+        "init.createFiles().createFolders()",
+        "INIT_WARNING",
+        "invalid CLI option, usage displayed"
+      );
   }
 }
 

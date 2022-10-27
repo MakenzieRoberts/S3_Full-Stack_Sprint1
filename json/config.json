@@ -4,6 +4,7 @@
   "description": "The Command Line Interface (CLI) for the MyApp.",
   "main": "myapp.js",
   "superuser": "adm1n",
-  "database": "exampledb",
-  "month": "nov"
+  "database": "Oct",
+  "cat": "",
+  "mouse": ""
 }

@@ -11,33 +11,61 @@ const { format } = require("date-fns");
 
 const myArgs = process.argv.slice(2);
 
-let arr = [];
-let tokenCount = function () {
+// let arr = [];
+// let tokenCount = function () {
+//   console.log("did the count function fire?"); // DT's test
+//   if (DEBUG) console.log("token.tokenCount()");
+//   // return new Promise(function (resolve, reject) {
+//   fsPromises.readFile(
+//     __dirname + "/json/tokens.json",
+//     "utf-8",
+//     (error, data) => {
+//       if (error) reject(error);
+//       else {
+//         console.log("is the else stmt in count working?");
+//         let tokens = JSON.parse(data);
+//         let count = Object.keys(tokens).length;
+//         console.log(`Current token count is ${count}.`);
+//         myEmitter.emit(
+//           "log",
+//           "token.tokenCount()",
+//           "TOKEN_INFO",
+//           `Current token count is ${count}.`
+//         );
+// arr.push(count);
+// console.log("is the count working?");
+// // resolve(count);
+// return arr;
+// }
+// }
+// );
+// }
+//   );
+// };
+
+var tokenCount = function () {
   if (DEBUG) console.log("token.tokenCount()");
-  // return new Promise(function (resolve, reject) {
-  fsPromises.readFile(
-    __dirname + "/json/tokens.json",
-    "utf-8",
-    (error, data) => {
+
+  return new Promise(function (resolve, reject) {
+    fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
       if (error) reject(error);
       else {
         let tokens = JSON.parse(data);
+
         let count = Object.keys(tokens).length;
+
         console.log(`Current token count is ${count}.`);
+
         myEmitter.emit(
           "log",
           "token.tokenCount()",
-          "INFO",
+          "TOKEN_INFO",
           `Current token count is ${count}.`
         );
-        arr.push(count);
-        // resolve(count);
-        return arr;
+        resolve(count);
       }
-      // }
-      // );
-    }
-  );
+    });
+  });
 };
 
 function tokenList() {
@@ -52,7 +80,7 @@ function tokenList() {
     myEmitter.emit(
       "log",
       "token.tokenList()",
-      "INFO",
+      "TOKEN_INFO",
       `Current token list was displayed.`
     );
   });
@@ -107,7 +135,7 @@ async function newToken(username) {
           myEmitter.emit(
             "log",
             "token.newToken()",
-            "INFO",
+            "TOKEN_INFO",
             `New token ${newToken.token} was created for ${username}.`
           );
         }
@@ -206,7 +234,7 @@ function tokenApp() {
   myEmitter.emit(
     "log",
     "token.tokenApp()",
-    "INFO",
+    "TOKEN_INFO",
     "token option was called by CLI"
   );
 
@@ -243,7 +271,7 @@ function tokenApp() {
       myEmitter.emit(
         "log",
         "token.tokenApp()",
-        "INFO",
+        "TOKEN_WARNING",
         "invalid CLI option, usage displayed"
       );
   }
@@ -256,7 +284,6 @@ module.exports = {
   addDays,
   expiryCheck,
   existCheck,
-  arr,
   fetchRecord,
   searchRecord,
 };
