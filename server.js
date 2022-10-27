@@ -1,80 +1,38 @@
+//  Create server and import required modules
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3500;
-
 const path = require("path");
-const http = require("http");
 const bodyParser = require("body-parser");
-const {
-  tokenCount,
-  newToken,
-  expiryCheck,
-  existCheck,
-  arr,
-  fetchRecord,
-  searchRecord,
-} = require("./token.js");
+const PORT = process.env.PORT || 3500; // Default to port 3500 if not specified by environment
 
-const server = http.createServer(app);
-global.DEBUG = true;
+//  Set to true for robust console logging and debugging
+global.DEBUG = false;
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "./public")));
+// Handle formdata
+app.use(express.urlencoded({ extended: false }));
+// Handle JSON
+app.use(express.json());
+// Manage static files like CSS and images
+app.use("/", express.static(path.join(__dirname, "/public")));
 
-app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "./public/form.html"));
+// Establish routing
+app.use("/", require("./routes/root"));
+app.use("/create", require("./routes/api/tokens"));
+app.use("/token", require("./routes/api/tokens"))
+app.use("/fetch", require("./routes/api/tokens"))
+
+// 404 handling
+app.all("*", (req, res) => {
+  res.status(404);
+  if (req.accepts("html")) {
+    res.sendFile(path.join(__dirname, "views/web", "404.html"));
+  } else if (req.accepts("json")) {
+    res.json({ error: "404 not found" });
+  } else {
+    res.type("txt").send("404 Not Found");
+  }
 });
 
-// This function retrieves the username and password from the form
-const getUser = async (req, res) => {
-  const username = req.query.username;
-  let result = await existCheck(username);
-  console.log(`Check test result: ${result}`);
+// Run server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-  if (result[0] == false) {
-    const token = await newToken(username);
-    console.log("(server.js) - Username Retrieved: " + username);
-    res.status(200).send(`Your token is: ${token}`);
-  } else {
-    const token = result[1].token;
-    res.status(200).send(`Your token is: ${token}`);
-  }
-};
-
-const getRecord = async (req, res) => {
-  const username = req.query.username;
-  let result = await existCheck(username);
-  console.log(`Check test result: ${result}`);
-
-  if (result[0] == false) {
-    console.log("(server.js) - Username NOT RETRIEVED: " + username);
-    res.status(200).send(`No record found`);
-  } else {
-    const data = await fetchRecord(username);
-    console.log(data);
-    res.status(200).send(`The Record is: ${data}`);
-  }
-};
-
-const getToken = async (req, res) => {
-  const username = req.query.username;
-  let result = await existCheck(username);
-  console.log(`Check test result: ${result}`);
-
-  if (result[0] == false) {
-    const token = await searchRecord(username);
-    console.log("(server.js) - Username Retrieved: " + username);
-    res.status(200).send(`Your token is: ${token}`);
-  } else {
-    const token = result[1].token;
-    res.status(200).send(`Your token is: ${token}`);
-  }
-};
-
-app.get("/view", getUser);
-app.get("/fetch", getRecord);
-app.get("/token", getToken);
-
-server.listen(PORT, () => {
-  console.log(`Server is listening on port: ${PORT}`);
-});

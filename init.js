@@ -1,12 +1,17 @@
+//  Import common modules
 const fs = require("fs");
 const fsPromises = require("fs").promises;
 const path = require("path");
-const logEvents = require("./logEvents");
+
+//  Create an emitter
 const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
+
+//  Import middleware and custom modules
+const logEvents = require("./logEvents");
 const {
   folders,
   configjson,
@@ -16,8 +21,11 @@ const {
   configtxt,
   tokentxt,
 } = require("./templates");
+
+// Retrieve user inputs for processing
 const myArgs = process.argv.slice(2);
 
+// Create files and directories, initialize app
 function createFiles() {
   if (DEBUG) console.log("init.createFiles()");
   try {
@@ -159,6 +167,7 @@ function createFolders() {
     if (DEBUG) console.log("All folders successfully created.");
   }
 }
+
 function initializeApp() {
   if (DEBUG) console.log("initializeApp()");
 

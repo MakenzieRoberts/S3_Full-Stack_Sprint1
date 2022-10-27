@@ -58,21 +58,25 @@ function tokenList() {
   });
 }
 
+// Calculates the expiration date for new tokens
 function addDays(date, days) {
   let result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
 }
 
+// Creates a new token if one doesn't exist
 async function newToken(username) {
   if (DEBUG) console.log("token.newToken()");
 
+  // Check for existing user
   let result = await existCheck(username);
-
-  // Change this below:
   if (result[0] == true) {
     console.log(`Token already exists. Please use ${result[1].token}`);
+    return "Token already exists."
   } else {
+    // Create the new token object with template objects
+    // TODO: Add form inputs for other info
     let newToken = JSON.parse(`{
         "created": "1969-01-31 12:30:00", 
         "username": "username",
@@ -82,28 +86,34 @@ async function newToken(username) {
         "expires": "1969-02-03 12:30:00",
         "confirmed": "tbd"
     }`);
-
-    let now = new Date();
-    let expires = addDays(now, 3);
-
+  
+    //  Assign provided sername
     newToken.username = username;
-
+    //  Assign creation date
+    let now = new Date();
     newToken.created = `${format(now, "yyyy-MM-dd HH:mm:ss")}`;
+    //  Create hashed token using CRC32 library
     newToken.token = crc32(username).toString(16);
+    //  Determine expiration date
+    let expires = addDays(now, 3);
     newToken.expires = `${format(expires, "yyyy-MM-dd HH:mm:ss")}`;
 
+    //  Read from Tokens database
     fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
       if (error) throw error;
+      //  Add token to extant collection of data
       let tokens = JSON.parse(data);
       tokens.push(newToken);
       let userTokens = JSON.stringify(tokens);
 
+      // Write the newly changed data back to the database
       fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
         if (err) console.log(err);
         else {
           console.log(
             `New token ${newToken.token} was created for ${username}.`
           );
+          //  Log the new event
           myEmitter.emit(
             "log",
             "token.newToken()",
@@ -117,26 +127,29 @@ async function newToken(username) {
   }
 }
 
-// Checks for existing token and returns ___?
+// Checks if token exists and returns an array
 const existCheck = async (username) => {
   if (DEBUG) console.log("tokens.existCheck()");
+  // Set checker to false and instantiate empty array
   let tokenExists = false;
   let arr = [];
   try {
+    // Read tokens data file
     const readTokens = await fsPromises.readFile(
       __dirname + "/json/tokens.json",
       "utf8"
     );
     const tokens = JSON.parse(readTokens);
+
+    // Iterate through data incerementally
     for (let i = 0; i < tokens.length; i++) {
-      let tokenUsername = tokens[i].username;
-      if (tokenUsername == username) {
+      // Search for a username match
+      if (tokens[i].username == username) {
+        // Set checker to true
         tokenExists = true;
-        existingToken = tokens[i];
-        arr.push(tokenExists, existingToken);
+        arr.push(tokenExists, tokens[i]);
         return arr;
       }
-      tokenExists = false;
     }
   } catch (err) {
     throw err;
@@ -146,7 +159,6 @@ const existCheck = async (username) => {
 };
 
 // Checks for expired tokens and removes them from the database
-// TODO: does not run at same time as calling newToken
 const expiryCheck = () => {
   if (DEBUG) console.log("token.expiryCheck()");
 
@@ -170,35 +182,21 @@ const expiryCheck = () => {
   });
 };
 
-const fetchRecord = async function (record) {
-  let arr = [];
-  console.log(record);
-  let result = await existCheck(record);
+// Fetches record based on username input
+const getRecord = async function (username) {
+  if (DEBUG) console.log("token.getRecord()");
+  let result = await existCheck(username);
   if (result[0] == false) {
-    console.log("Record does not exist");
-    console.log(result);
-  } else {
-    let username = result[1].username;
-    let created = result[1].created;
-    let email = result[1].email;
-    let phone = result[1].phone;
-    let token = result[1].token;
-    let expires = result[1].expires;
-    let confirmed = result[1].confirmed;
-    console.log(username);
-    let rec = `Username: ${username}, Created: ${created}, Email: ${email}, Phone: ${phone}, Token: ${token}, Expires: ${expires}, Confirmed: ${confirmed}`;
-
-    return rec;
-  }
+    return "No record could be found."
+  } else return  result[1];
 };
 
-const searchRecord = async function (record) {
-  console.log(record);
-  let result = await existCheck(record);
+// 
+const searchToken = async function (username) {
+  let result = await existCheck(username);
   if (result[0] == false) {
-    console.log("Record does not exist");
-    console.log(result);
-  } else console.log(result[1].token);
+    return "Token does not exist"
+  } else return result[1].token;
 };
 
 function tokenApp() {
@@ -226,12 +224,12 @@ function tokenApp() {
       newToken(myArgs[2]);
       break;
     case "--fetch":
-      if (DEBUG) console.log("token.fetchRecord");
-      fetchRecord(myArgs[2]);
+      if (DEBUG) console.log("token.getRecord");
+      getRecord(myArgs[2]);
       break;
     case "--search":
       if (DEBUG) console.log("token.searchToken()");
-      searchRecord(myArgs[3]);
+      searchToken(myArgs[3]);
       break;
     case "--help":
     case "--h":
@@ -257,6 +255,6 @@ module.exports = {
   expiryCheck,
   existCheck,
   arr,
-  fetchRecord,
-  searchRecord,
+  getRecord,
+  searchToken,
 };
