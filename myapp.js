@@ -24,8 +24,6 @@ const { tokenApp, expiryCheck } = require("./token.js");
 const myArgs = process.argv.slice(2);
 if (DEBUG) if (myArgs.length >= 1) console.log("the myapp.args: ", myArgs);
 
-
-
 //Token validation occurs every time app is loaded
 expiryCheck();
 

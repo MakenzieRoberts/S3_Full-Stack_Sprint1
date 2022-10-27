@@ -35,7 +35,7 @@ const logEvents = async (event, level, message) => {
       }
       // Include todays date in filename
       const fileName =
-        `${format(new Date(), "yyyyMMdd")}` + "_configWarnings.log";
+        `${format(new Date(), "yyyyMMdd")}` + "_Config_Warnings.log";
       await fsPromises.appendFile(
         path.join(__dirname, "logs", fileName),
         logItem + "\n"
@@ -46,7 +46,55 @@ const logEvents = async (event, level, message) => {
         await fsPromises.mkdir(path.join(__dirname, "logs"));
       }
       // Include todays date in filename
-      const fileName = `${format(new Date(), "yyyyMMdd")}` + "_configInfo.log";
+      const fileName = `${format(new Date(), "yyyyMMdd")}` + "_Config_Info.log";
+      await fsPromises.appendFile(
+        path.join(__dirname, "logs", fileName),
+        logItem + "\n"
+      );
+    }
+    if (level === "INIT_WARNING") {
+      if (!fs.existsSync(path.join(__dirname, "logs"))) {
+        // include ./logs/yyyy/mmmm
+        await fsPromises.mkdir(path.join(__dirname, "logs"));
+      }
+      // Include todays date in filename
+      const fileName =
+        `${format(new Date(), "yyyyMMdd")}` + "_Init_Warnings.log";
+      await fsPromises.appendFile(
+        path.join(__dirname, "logs", fileName),
+        logItem + "\n"
+      );
+    } else if (level === "INIT_INFO") {
+      if (!fs.existsSync(path.join(__dirname, "logs"))) {
+        // include ./logs/yyyy/mmmm
+        await fsPromises.mkdir(path.join(__dirname, "logs"));
+      }
+      // Include todays date in filename
+      const fileName = `${format(new Date(), "yyyyMMdd")}` + "_Init_Info.log";
+      await fsPromises.appendFile(
+        path.join(__dirname, "logs", fileName),
+        logItem + "\n"
+      );
+    }
+    if (level === "TOKEN_WARNING") {
+      if (!fs.existsSync(path.join(__dirname, "logs"))) {
+        // include ./logs/yyyy/mmmm
+        await fsPromises.mkdir(path.join(__dirname, "logs"));
+      }
+      // Include todays date in filename
+      const fileName =
+        `${format(new Date(), "yyyyMMdd")}` + "_Token_Warnings.log";
+      await fsPromises.appendFile(
+        path.join(__dirname, "logs", fileName),
+        logItem + "\n"
+      );
+    } else if (level === "TOKEN_INFO") {
+      if (!fs.existsSync(path.join(__dirname, "logs"))) {
+        // include ./logs/yyyy/mmmm
+        await fsPromises.mkdir(path.join(__dirname, "logs"));
+      }
+      // Include todays date in filename
+      const fileName = `${format(new Date(), "yyyyMMdd")}` + "_Token_Info.log";
       await fsPromises.appendFile(
         path.join(__dirname, "logs", fileName),
         logItem + "\n"

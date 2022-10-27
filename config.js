@@ -56,27 +56,68 @@ function setConfig() {
     }
   });
 }
+// ORIGINAL
+// function newConfig() {
+//   if (DEBUG) console.log("config.newConfig()");
+//   if (DEBUG) console.log(myArgs);
+//   fs.readFile(__dirname + "/json/config.json", (error, data) => {
+//     if (error) throw error;
+//     if (DEBUG) console.log(JSON.parse(data));
+//     let att = JSON.parse(data);
+//     let key = myArgs[2];
+//     att[key] = "";
+//     data = JSON.stringify(att, null, 2);
+//     fs.writeFile(__dirname + "/json/config.json", data, (error) => {
+//       if (error) throw error;
+//       console.log("Config file successfully updated.");
+//       myEmitter.emit(
+//         "log",
+//         "config.newConfig()",
+//         "CONFIG_INFO",
+//         `config.json "${myArgs[2]}": attribute added`
+//       );
+//     });
+//   });
+// }
 
 function newConfig() {
   if (DEBUG) console.log("config.newConfig()");
   if (DEBUG) console.log(myArgs);
+  let match = false;
   fs.readFile(__dirname + "/json/config.json", (error, data) => {
     if (error) throw error;
     if (DEBUG) console.log(JSON.parse(data));
     let att = JSON.parse(data);
-    let key = myArgs[2];
-    att[key] = "";
-    data = JSON.stringify(att, null, 2);
-    fs.writeFile(__dirname + "/json/config.json", data, (error) => {
-      if (error) throw error;
-      console.log("Config file successfully updated.");
+    for (let key of Object.keys(att)) {
+      if (key === myArgs[2]) {
+        match = true;
+      }
+    }
+    // is this because it starts as false but then becomes true if there is a same key value??
+    // if(match) // original
+    if (match === true) {
+      console.log(myArgs[2] + " attribute already exists try another");
       myEmitter.emit(
         "log",
         "config.newConfig()",
-        "CONFIG_INFO",
-        `config.json "${myArgs[2]}": attribute added`
+        "CONFIG_WARNING",
+        `duplicated attribute: ${myArgs[2]}`
       );
-    });
+    } else {
+      let key = myArgs[2];
+      att[key] = "";
+      data = JSON.stringify(att, null, 2);
+      fs.writeFile(__dirname + "/json/config.json", data, (error) => {
+        if (error) throw error;
+        console.log("Config file successfully updated.");
+        myEmitter.emit(
+          "log",
+          "config.newConfig()",
+          "CONFIG_INFO",
+          `config.json "${myArgs[2]}": attribute added`
+        );
+      });
+    }
   });
 }
 
@@ -114,7 +155,7 @@ function configApp() {
   myEmitter.emit(
     "log",
     "config.configApp()",
-    "INFO",
+    "CONFIG_INFO",
     "config option was called by CLI"
   );
 
@@ -145,7 +186,7 @@ function configApp() {
       myEmitter.emit(
         "log",
         "config.configApp()",
-        "INFO",
+        "CONFIG_WARNING",
         "invalid CLI option, usage displayed"
       );
   }
