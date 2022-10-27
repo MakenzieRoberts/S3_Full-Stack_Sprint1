@@ -4,6 +4,6 @@
   "description": "The Command Line Interface (CLI) for the MyApp.",
   "main": "myapp.js",
   "superuser": "adm1n",
-  "database": "best_team",
-  "year": "2022"
+  "database": "exampledb",
+  "month": "nov"
 }

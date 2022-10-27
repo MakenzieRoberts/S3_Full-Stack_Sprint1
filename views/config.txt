@@ -4,8 +4,8 @@ myapp <command> <option>
 
 Usage:
 
-myapp config --show     displays a list of the current config settings
+myapp config --show     displays the current config settings
 myapp config --reset    resets the config file with default settings
-myapp config --set      sets a specific config setting
-myapp config --new <newkey> <newvalue>     adds a new attribute 
+myapp config --set      sets a specific value to a named attribute
+myapp config --new      adds a new attribute to the config file
 
