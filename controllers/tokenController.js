@@ -1,37 +1,31 @@
-const { compareDesc } = require("date-fns");
+// These controllers route the web request to use the same functions employed by the command line interface, keeping our code DRY.
+// Note they return JSON format, should we choose to style our responses this will make it easier to have modular components.
+
 const {
   newToken,
   getRecord,
   searchToken,
 } = require("../token.js");
 
-const data = {
-  ads: require("../json/tokens.json"),
-  setAds: function (data) {
-    this.ads = data;
-  },
-};
-
-
-//  Creates a new user 
+// Handles new user requests. 
 const createUser = async (req, res) => {
-    const username = req.body.username;
+    const username = req.body.username;   // NOTE: Data extracted from request body when using POST
     const result = await newToken(username)
-    res.status(200).send(result);
+    res.status(201).json(result);  
   };
 
-// Returns existing user data
+// Handles user record requests
 const fetchRecord = async (req, res) => {
   const username = req.query.username;
   const result = await getRecord(username);
-  res.status(200).send(result); 
+  res.status(200).json(result); 
 };
 
-// Returns a token for supplied username
+// Handles existing token queries
 const getToken = async (req, res) => {
   const username = req.query.username;
-  const result =  await searchToken(username)
-    res.status(200).json(result);
+  const result =  await searchToken(username);
+  res.status(200).json(result);
 };
 
 module.exports = {

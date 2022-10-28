@@ -21,7 +21,7 @@ function setConfig() {
   if (DEBUG) console.log("config.setConfig()");
   if (DEBUG) console.log(myArgs);
   let match = false;
-  fs.readFile(__dirname + "/json/config.json", (error, data) => {
+  fs.readFile(__dirname + "/data/config.json", (error, data) => {
     if (error) throw error;
     if (DEBUG) console.log(JSON.parse(data));
     let cfg = JSON.parse(data);
@@ -43,7 +43,7 @@ function setConfig() {
     } else {
       if (DEBUG) console.log(cfg);
       data = JSON.stringify(cfg, null, 2);
-      fs.writeFile(__dirname + "/json/config.json", data, (error) => {
+      fs.writeFile(__dirname + "/data/config.json", data, (error) => {
         if (error) throw error;
         console.log("Attribute value in Config file successfully updated.");
         myEmitter.emit(
@@ -60,14 +60,14 @@ function setConfig() {
 function newConfig() {
   if (DEBUG) console.log("config.newConfig()");
   if (DEBUG) console.log(myArgs);
-  fs.readFile(__dirname + "/json/config.json", (error, data) => {
+  fs.readFile(__dirname + "/data/config.json", (error, data) => {
     if (error) throw error;
     if (DEBUG) console.log(JSON.parse(data));
     let att = JSON.parse(data);
     let key = myArgs[2];
     att[key] = "";
     data = JSON.stringify(att, null, 2);
-    fs.writeFile(__dirname + "/json/config.json", data, (error) => {
+    fs.writeFile(__dirname + "/data/config.json", data, (error) => {
       if (error) throw error;
       console.log("Config file successfully updated.");
       myEmitter.emit(
@@ -83,7 +83,7 @@ function newConfig() {
 function resetConfig() {
   if (DEBUG) console.log("config.resetConfig()");
   let configdata = JSON.stringify(configjson, null, 2);
-  fs.writeFile(__dirname + "/json/config.json", configdata, (error) => {
+  fs.writeFile(__dirname + "/data/config.json", configdata, (error) => {
     if (error) throw error;
     console.log("Config file reset to original state");
     myEmitter.emit(
@@ -97,7 +97,7 @@ function resetConfig() {
 
 function displayConfig() {
   if (DEBUG) console.log("config.displayConfig()");
-  fs.readFile(__dirname + "/json/config.json", (error, data) => {
+  fs.readFile(__dirname + "/data/config.json", (error, data) => {
     if (error) throw error;
     console.log(JSON.parse(data));
   });

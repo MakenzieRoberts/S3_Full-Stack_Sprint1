@@ -1,4 +1,4 @@
-const folders = ["models", "views", "routes", "logs", "json"];
+const folders = ["models", "views", "routes", "logs", "data"];
 
 const configjson = {
   name: "AppConfigCLI",

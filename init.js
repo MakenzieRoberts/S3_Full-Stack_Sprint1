@@ -30,8 +30,8 @@ function createFiles() {
   if (DEBUG) console.log("init.createFiles()");
   try {
     let configdata = JSON.stringify(configjson, null, 2);
-    if (!fs.existsSync(path.join(__dirname, "./json/config.json"))) {
-      fs.writeFile("./json/config.json", configdata, (err) => {
+    if (!fs.existsSync(path.join(__dirname, "./data/config.json"))) {
+      fs.writeFile("./data/config.json", configdata, (err) => {
         if (DEBUG) console.log("Data written to config file");
         myEmitter.emit(
           "log",
@@ -49,8 +49,8 @@ function createFiles() {
       );
     }
     let tokendata = JSON.stringify(tokenjson, null, 2);
-    if (!fs.existsSync(path.join(__dirname, "./json/tokens.json"))) {
-      fs.writeFile("./json/tokens.json", tokendata, (err) => {
+    if (!fs.existsSync(path.join(__dirname, "./data/tokens.json"))) {
+      fs.writeFile("./data/tokens.json", tokendata, (err) => {
         if (DEBUG) console.log("Data written to token file");
         myEmitter.emit(
           "log",

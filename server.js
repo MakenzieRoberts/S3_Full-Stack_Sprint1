@@ -25,21 +25,18 @@ app.post("/", tokenController.createUser);
 app.get("/fetch", tokenController.fetchRecord);
 app.get("/token", tokenController.getToken);
 
-// app.use("/create", require("./routes/api/tokens"));
-// app.use("/token", require("./routes/api/tokens"))
-// app.use("/fetch", require("./routes/api/tokens"))
 
 // 404 handling
-// app.all("*", (req, res) => {
-//   res.status(404);
-//   if (req.accepts("html")) {
-//     res.sendFile(path.join(__dirname, "views/web", "404.html"));
-//   } else if (req.accepts("json")) {
-//     res.json({ error: "404 not found" });
-//   } else {
-//     res.type("txt").send("404 Not Found");
-//   }
-// });
+app.all("*", (req, res) => {
+  res.status(404);
+  if (req.accepts("html")) {
+    res.sendFile(path.join(__dirname, "views/web", "404.html"));
+  } else if (req.accepts("json")) {
+    res.json({ error: "404 not found" });
+  } else {
+    res.type("txt").send("404 Not Found");
+  }
+});
 
 // Run server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

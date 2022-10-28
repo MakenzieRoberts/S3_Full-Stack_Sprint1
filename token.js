@@ -1,13 +1,18 @@
-const logEvents = require("./logEvents");
+//  Handles all functions related to token creation, querying and expiration. 
+
+//
+const fs = require("fs");
+const fsPromises = require("fs").promises;
+
 const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
-const fs = require("fs");
-const fsPromises = require("fs").promises;
 const crc32 = require("crc/crc32");
 const { format } = require("date-fns");
+
+const logEvents = require("./logEvents");
 
 const myArgs = process.argv.slice(2);
 
@@ -16,7 +21,7 @@ let tokenCount = function () {
   if (DEBUG) console.log("token.tokenCount()");
   // return new Promise(function (resolve, reject) {
   fsPromises.readFile(
-    __dirname + "/json/tokens.json",
+    __dirname + "/data/tokens.json",
     "utf-8",
     (error, data) => {
       if (error) reject(error);
@@ -42,7 +47,7 @@ let tokenCount = function () {
 
 function tokenList() {
   if (DEBUG) console.log("token.tokenList()");
-  fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
+  fs.readFile(__dirname + "/data/tokens.json", "utf-8", (error, data) => {
     if (error) throw error;
     let tokens = JSON.parse(data);
     console.log("** User List **");
@@ -73,7 +78,7 @@ async function newToken(username) {
   let result = await existCheck(username);
   if (result[0] == true) {
     console.log(`Token already exists. Please use ${result[1].token}`);
-    return "Token already exists."
+    return "Token already exists." 
   } else {
     // Create the new token object with template objects
     // TODO: Add form inputs for other info
@@ -84,7 +89,7 @@ async function newToken(username) {
         "phone": "5556597890",
         "token": "token",
         "expires": "1969-02-03 12:30:00",
-        "confirmed": "tbd"
+        "confirmed": "false"
     }`);
   
     //  Assign provided sername
@@ -99,7 +104,7 @@ async function newToken(username) {
     newToken.expires = `${format(expires, "yyyy-MM-dd HH:mm:ss")}`;
 
     //  Read from Tokens database
-    fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
+    fs.readFile(__dirname + "/data/tokens.json", "utf-8", (error, data) => {
       if (error) throw error;
       //  Add token to extant collection of data
       let tokens = JSON.parse(data);
@@ -107,7 +112,7 @@ async function newToken(username) {
       let userTokens = JSON.stringify(tokens);
 
       // Write the newly changed data back to the database
-      fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
+      fs.writeFile(__dirname + "/data/tokens.json", userTokens, (err) => {
         if (err) console.log(err);
         else {
           console.log(
@@ -123,7 +128,7 @@ async function newToken(username) {
         }
       });
     });
-    return newToken;
+    return newToken.token;
   }
 }
 
@@ -136,7 +141,7 @@ const existCheck = async (username) => {
   try {
     // Read tokens data file
     const readTokens = await fsPromises.readFile(
-      __dirname + "/json/tokens.json",
+      __dirname + "/data/tokens.json",
       "utf8"
     );
     const tokens = JSON.parse(readTokens);
@@ -163,7 +168,7 @@ const expiryCheck = () => {
   if (DEBUG) console.log("token.expiryCheck()");
 
   // Find tokens json file
-  fs.readFile(__dirname + "/json/tokens.json", "utf8", (error, data) => {
+  fs.readFile(__dirname + "/data/tokens.json", "utf8", (error, data) => {
     if (error) throw error;
     let today = new Date();
     todayStr = Date.parse(today); // Convert todays date to ISO format
@@ -176,7 +181,7 @@ const expiryCheck = () => {
       } // Remove the element from tokens
     }
     userTokens = JSON.stringify(tokens);
-    fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
+    fs.writeFile(__dirname + "/data/tokens.json", userTokens, (err) => {
       if (err) throw err;
     });
   });
@@ -191,14 +196,16 @@ const getRecord = async function (username) {
   } else return  result[1];
 };
 
-// 
+//  
 const searchToken = async function (username) {
   let result = await existCheck(username);
   if (result[0] == false) {
     return "Token does not exist"
-  } else return result[1].token;
+  } else 
+  return result[1].token;
 };
 
+//  Command line interface application
 function tokenApp() {
   if (DEBUG) console.log("tokenApp()");
   myEmitter.emit(
