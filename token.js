@@ -85,7 +85,7 @@ const newToken = async (username) => {
     let newToken = JSON.parse(`{
         "created": "1969-01-31 12:30:00", 
         "username": "username",
-        "email": "user@example.com",
+         "email": "user@example.com",
         "phone": "5556597890",
         "token": "token",
         "expires": "1969-02-03 12:30:00",
@@ -137,10 +137,13 @@ const newToken = async (username) => {
 // The second index is an object but only when the first index is false.
 const existCheck = async (username) => {
   if (DEBUG) console.log("tokens.existCheck()");
-  // Set checker to false and instantiate empty array
 
+  // Set checker to false and instantiate empty array
   let tokenExists = false;
   let arr = [];
+
+  let today = new Date(); // Create today's date variable
+  todayStr = Date.parse(today); //  Convert todays date to ISO format
   try {
     // Read tokens data file
     const readTokens = await fsPromises.readFile(
@@ -153,11 +156,24 @@ const existCheck = async (username) => {
     for (let i = 0; i < tokens.length; i++) {
       // Search for a username match
       if (tokens[i].username == username) {
-        // Set checker to true
-        tokenExists = true;
-        arr.push(tokenExists, tokens[i]);
-        // Returns the existing token for requested username
-        return arr;
+        let tokenExp = Date.parse(tokens[i].expires); //  Convert token expiry dates to ISO format
+        if (tokenExp + 259200000 <= todayStr) {
+          //  Check if expiry date has elapsed
+          tokens.splice(i, 1); //  Remove the element from data file
+
+          let userTokens = JSON.stringify(tokens); // Write edited file back to disk
+          fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
+            if (err) throw err;
+          });
+          tokenExists = false;
+          arr.push(tokenExists);
+          return arr;
+        } else {
+          tokenExists = true;
+          arr.push(tokenExists, tokens[i]);
+          // Returns the existing token for requested username
+          return arr;
+        }
       }
     }
   } catch (err) {
@@ -168,50 +184,32 @@ const existCheck = async (username) => {
   return arr;
 };
 
-//  Checks for expired tokens and removes them from the database
-
-const expiryCheck = async function () {
-  if (DEBUG) console.log("token.expiryCheck()");
-  //  Find tokens json file
-  fs.readFile(__dirname + "/json/tokens.json", "utf8", (error, data) => {
-    if (error) throw error;
-    let today = new Date();
-    todayStr = Date.parse(today); //  Convert todays date to ISO format
-    const tokens = JSON.parse(data); // Parse JSON to string
-    for (let i = 0; i < tokens.length; i++) {
-      let tokenExp = Date.parse(tokens[i].expires); //  Convert token expiry dates to ISO format
-      if (tokenExp + 259200000 <= todayStr) {
-        //  Check if expiry date has elapsed
-        tokens.splice(i, 1); //  Remove the element from data file
-      }
-    }
-    userTokens = JSON.stringify(tokens); // Write edited file back to disk
-    fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
-      if (err) throw err;
-    });
-  });
-};
-
 // Fetches record based on username input
 const getRecord = async function (username) {
   if (DEBUG) console.log("token.getRecord()");
+  //  Check for username in database
   let result = await existCheck(username);
   if (result[0] == false) {
+    //  If no match found
     console.log("No result found.");
     return "No record could be found.";
   } else {
+    // Return match
     console.log(result[1]);
     return result[1];
   }
 };
 
-//
+//  Search for token by username
 const searchToken = async function (username) {
+  //  Check for username in database
   let result = await existCheck(username);
   if (result[0] == false) {
+    //  If no match found
     console.log("Token does not exist.");
     return "Token does not exist";
   } else {
+    //  Return match
     console.log(`Token for username [${username}]: ${result[1].token}`);
     return result[1].token;
   }
@@ -238,8 +236,6 @@ function tokenApp() {
       break;
     case "--new":
       if (DEBUG) console.log("token.newToken() --new");
-      existCheck();
-      expiryCheck();
       newToken(myArgs[2]);
       break;
     case "--fetch":
@@ -269,7 +265,6 @@ module.exports = {
   newToken,
   tokenCount,
   addDays,
-  expiryCheck,
   existCheck,
   getRecord,
   searchToken,

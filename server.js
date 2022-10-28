@@ -4,7 +4,6 @@ const app = express();
 const path = require("path");
 const PORT = process.env.PORT || 3500; // Default to port 3500 if not specified by environment
 const tokenController = require("./controllers/tokenController");
-const { expiryCheck } = require("./token.js");
 //  Set to true for robust console logging and debugging
 global.DEBUG = false;
 
@@ -22,7 +21,6 @@ app.get("/", (req, res) => {
 app.post("/user", tokenController.createUser); // POST: new user
 app.get("/fetch", tokenController.fetchRecord); //  GET: user record
 app.get("/token", tokenController.getToken); //  GET: user token
-app.delete("/expiry", tokenController.deleteExpired);
 
 // 404 handling
 app.all("*", (req, res) => {
@@ -37,4 +35,6 @@ app.all("*", (req, res) => {
 });
 
 // Run server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
