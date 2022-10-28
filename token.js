@@ -75,8 +75,10 @@ const newToken = async (username) => {
   // Check for existing user
   let result = await existCheck(username);
   if (result[0] == true) {
-    console.log(`Token already exists. Please use ${result[1].token}`);
-    return "Token already exists.";
+    console.log(
+      `A token already exists for this user. Please use the search option.`
+    );
+    return "A token already exists for this user. Please use the search option.";
   } else {
     // Create the new token object with template objects
     // TODO: Add form inputs for other info
@@ -130,13 +132,13 @@ const newToken = async (username) => {
   }
 };
 
-// Checks if token exists and returns an array. 
+// Checks if token exists and returns an array.
 // The first index is always a boolean true/false.
 // The second index is an object but only when the first index is false.
 const existCheck = async (username) => {
   if (DEBUG) console.log("tokens.existCheck()");
   // Set checker to false and instantiate empty array
-  expiryCheck()
+
   let tokenExists = false;
   let arr = [];
   try {
@@ -167,9 +169,9 @@ const existCheck = async (username) => {
 };
 
 //  Checks for expired tokens and removes them from the database
-const expiryCheck = () => {
-  if (DEBUG) console.log("token.expiryCheck()");
 
+const expiryCheck = async function () {
+  if (DEBUG) console.log("token.expiryCheck()");
   //  Find tokens json file
   fs.readFile(__dirname + "/json/tokens.json", "utf8", (error, data) => {
     if (error) throw error;
@@ -178,9 +180,10 @@ const expiryCheck = () => {
     const tokens = JSON.parse(data); // Parse JSON to string
     for (let i = 0; i < tokens.length; i++) {
       let tokenExp = Date.parse(tokens[i].expires); //  Convert token expiry dates to ISO format
-      if (tokenExp + 259200000 <= todayStr) { //  Check if expiry date has elapsed
+      if (tokenExp + 259200000 <= todayStr) {
+        //  Check if expiry date has elapsed
         tokens.splice(i, 1); //  Remove the element from data file
-      } 
+      }
     }
     userTokens = JSON.stringify(tokens); // Write edited file back to disk
     fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
@@ -209,8 +212,8 @@ const searchToken = async function (username) {
     console.log("Token does not exist.");
     return "Token does not exist";
   } else {
-    console.log(result[1].username);
-    return result[1].username;
+    console.log(`Token for username [${username}]: ${result[1].token}`);
+    return result[1].token;
   }
 };
 

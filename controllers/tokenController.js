@@ -2,9 +2,11 @@
 // Note they return JSON format, should we choose to style our responses this will make it easier to have modular components.
 
 const { newToken, getRecord, searchToken } = require("../token.js");
+const { expiryCheck } = require("../token");
 
 // Handles new user requests.
 const createUser = async (req, res) => {
+  // expiryCheck();
   const username = req.body.username; // NOTE: Data extracted from request body when using POST
   const result = await newToken(username);
   res.status(201).json(result);
@@ -12,6 +14,7 @@ const createUser = async (req, res) => {
 
 // Handles user record requests
 const fetchRecord = async (req, res) => {
+  // expiryCheck();
   const username = req.query.username;
   const result = await getRecord(username);
   res.status(200).json(result);
@@ -19,13 +22,19 @@ const fetchRecord = async (req, res) => {
 
 // Handles existing token queries
 const getToken = async (req, res) => {
+  // expiryCheck();
   const username = req.query.username;
   const result = await searchToken(username);
   res.status(200).json(result);
+};
+
+const deleteExpired = async (req, res) => {
+  expiryCheck();
 };
 
 module.exports = {
   createUser,
   getToken,
   fetchRecord,
+  deleteExpired,
 };
