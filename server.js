@@ -4,7 +4,7 @@ const app = express();
 const path = require("path");
 const PORT = process.env.PORT || 3500; // Default to port 3500 if not specified by environment
 const tokenController = require("./controllers/tokenController");
-
+const {expiryCheck } = require("./token.js")
 //  Set to true for robust console logging and debugging
 global.DEBUG = false;
 
@@ -15,14 +15,13 @@ app.use(express.json());
 // Manage static files like CSS and images
 app.use("/", express.static(path.join(__dirname, "/public")));
 
-// Establish routing
-// app.use("/", require("./routes/root"));
+//  Routing
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "./views/web/form.html"));
+  res.sendFile(path.join(__dirname, "./public/form.html"));
 });
-app.post("/", tokenController.createUser);
-app.get("/fetch", tokenController.fetchRecord);
-app.get("/token", tokenController.getToken);
+app.post("/", tokenController.createUser); // POST: new user
+app.get("/fetch", tokenController.fetchRecord); //  GET: user record
+app.get("/token", tokenController.getToken);//  GET: user token
 
 // 404 handling
 app.all("*", (req, res) => {
@@ -35,6 +34,7 @@ app.all("*", (req, res) => {
     res.type("txt").send("404 Not Found");
   }
 });
+
 
 // Run server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

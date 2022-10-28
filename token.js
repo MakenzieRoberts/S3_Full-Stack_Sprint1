@@ -14,15 +14,15 @@ myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 //  Dependencies for dates and hashing tokens
 const crc32 = require("crc/crc32");
 const { format } = require("date-fns");
-
+//  Slice for CLI
 const myArgs = process.argv.slice(2);
 
-let arr = [];
 const tokenCount = () => {
+  let arr = [];
   if (DEBUG) console.log("token.tokenCount()");
   // return new Promise(function (resolve, reject) {
   fsPromises.readFile(
-    __dirname + "/data/tokens.json",
+    __dirname + "/json/tokens.json",
     "utf-8",
     (error, data) => {
       if (error) reject(error);
@@ -37,18 +37,15 @@ const tokenCount = () => {
           `Current token count is ${count}.`
         );
         arr.push(count);
-        // resolve(count);
         return arr;
       }
-      // }
-      // );
     }
   );
 };
 
 const tokenList = () => {
   if (DEBUG) console.log("token.tokenList()");
-  fs.readFile(__dirname + "/data/tokens.json", "utf-8", (error, data) => {
+  fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
     if (error) throw error;
     let tokens = JSON.parse(data);
     console.log("** User List **");
@@ -93,7 +90,7 @@ const newToken = async (username) => {
         "confirmed": "false"
     }`);
 
-    //  Assign provided sername
+    //  Assign provided username
     newToken.username = username;
     //  Assign creation date
     let now = new Date();
@@ -105,7 +102,7 @@ const newToken = async (username) => {
     newToken.expires = `${format(expires, "yyyy-MM-dd HH:mm:ss")}`;
 
     //  Read from Tokens database
-    fs.readFile(__dirname + "/data/tokens.json", "utf-8", (error, data) => {
+    fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
       if (error) throw error;
       //  Add token to extant collection of data
       let tokens = JSON.parse(data);
@@ -113,7 +110,7 @@ const newToken = async (username) => {
       let userTokens = JSON.stringify(tokens);
 
       // Write the newly changed data back to the database
-      fs.writeFile(__dirname + "/data/tokens.json", userTokens, (err) => {
+      fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
         if (err) console.log(err);
         else {
           console.log(
@@ -133,16 +130,19 @@ const newToken = async (username) => {
   }
 };
 
-// Checks if token exists and returns an array
+// Checks if token exists and returns an array. 
+// The first index is always a boolean true/false.
+// The second index is an object but only when the first index is false.
 const existCheck = async (username) => {
   if (DEBUG) console.log("tokens.existCheck()");
   // Set checker to false and instantiate empty array
+  expiryCheck()
   let tokenExists = false;
   let arr = [];
   try {
     // Read tokens data file
     const readTokens = await fsPromises.readFile(
-      __dirname + "/data/tokens.json",
+      __dirname + "/json/tokens.json",
       "utf8"
     );
     const tokens = JSON.parse(readTokens);
@@ -154,35 +154,36 @@ const existCheck = async (username) => {
         // Set checker to true
         tokenExists = true;
         arr.push(tokenExists, tokens[i]);
+        // Returns the existing token for requested username
         return arr;
       }
     }
   } catch (err) {
     throw err;
   }
+  // Push false to first index if no matches found
   arr.push(tokenExists);
   return arr;
 };
 
-// Checks for expired tokens and removes them from the database
+//  Checks for expired tokens and removes them from the database
 const expiryCheck = () => {
   if (DEBUG) console.log("token.expiryCheck()");
 
-  // Find tokens json file
-  fs.readFile(__dirname + "/data/tokens.json", "utf8", (error, data) => {
+  //  Find tokens json file
+  fs.readFile(__dirname + "/json/tokens.json", "utf8", (error, data) => {
     if (error) throw error;
     let today = new Date();
-    todayStr = Date.parse(today); // Convert todays date to ISO format
+    todayStr = Date.parse(today); //  Convert todays date to ISO format
     const tokens = JSON.parse(data); // Parse JSON to string
     for (let i = 0; i < tokens.length; i++) {
-      let tokenExp = Date.parse(tokens[i].expires); // Convert token expiry dates to ISO format
-      if (tokenExp + 259200000 <= todayStr) {
-        // Check if expiry date has elapsed
-        tokens.splice(i, 1);
-      } // Remove the element from tokens
+      let tokenExp = Date.parse(tokens[i].expires); //  Convert token expiry dates to ISO format
+      if (tokenExp + 259200000 <= todayStr) { //  Check if expiry date has elapsed
+        tokens.splice(i, 1); //  Remove the element from data file
+      } 
     }
-    userTokens = JSON.stringify(tokens);
-    fs.writeFile(__dirname + "/data/tokens.json", userTokens, (err) => {
+    userTokens = JSON.stringify(tokens); // Write edited file back to disk
+    fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
       if (err) throw err;
     });
   });
@@ -246,8 +247,6 @@ function tokenApp() {
       if (DEBUG) console.log("token.searchToken()");
       searchToken(myArgs[3]);
       break;
-    case "--help":
-    case "--h":
     default:
       fs.readFile(__dirname + "/views/token.txt", (error, data) => {
         if (error) throw error;
@@ -269,7 +268,6 @@ module.exports = {
   addDays,
   expiryCheck,
   existCheck,
-  arr,
   getRecord,
   searchToken,
 };

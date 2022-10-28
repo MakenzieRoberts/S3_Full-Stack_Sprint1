@@ -1,3 +1,4 @@
+// Logs events as called by an event emitter
 // NPM installed Modules
 const { format } = require("date-fns");
 const { v4: uuid } = require("uuid");

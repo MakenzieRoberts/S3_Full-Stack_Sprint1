@@ -8,6 +8,7 @@
  * Created Date: 09 Jan 2022
  * Authors:
  * PJR - Peter Rawsthorne
+ * 
  * Revisions:
  * Date, Author, Description
  * 09 Jan 2022, PJR, File created
@@ -24,7 +25,7 @@ const { tokenApp, expiryCheck } = require("./token.js");
 const myArgs = process.argv.slice(2);
 if (DEBUG) if (myArgs.length >= 1) console.log("the myapp.args: ", myArgs);
 
-//Token validation occurs every time app is loaded
+//Token validation occurs every time app is loaded. 
 expiryCheck();
 
 switch (myArgs[0]) {
