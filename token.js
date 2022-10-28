@@ -1,3 +1,12 @@
+/*----------------------------------------------------------------------
+File Name: token.js
+Purpose: Creates tokens when a new user is added to the dot json file
+         and allows for serches and deletes
+Commands: see usage.txt file
+Created Date: October 21, 2022
+Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
+------------------------------------------------------------------------*/
+
 const logEvents = require("./logEvents");
 const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
@@ -11,60 +20,43 @@ const { format } = require("date-fns");
 
 const myArgs = process.argv.slice(2);
 
-// let arr = [];
-// let tokenCount = function () {
-//   console.log("did the count function fire?"); // DT's test
+// var tokenCount = function () {
 //   if (DEBUG) console.log("token.tokenCount()");
-//   // return new Promise(function (resolve, reject) {
-//   fsPromises.readFile(
-//     __dirname + "/json/tokens.json",
-//     "utf-8",
-//     (error, data) => {
+
+//   return new Promise(function (resolve, reject) {
+//     fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
 //       if (error) reject(error);
 //       else {
-//         console.log("is the else stmt in count working?");
 //         let tokens = JSON.parse(data);
+
 //         let count = Object.keys(tokens).length;
+
 //         console.log(`Current token count is ${count}.`);
+
 //         myEmitter.emit(
 //           "log",
 //           "token.tokenCount()",
 //           "TOKEN_INFO",
 //           `Current token count is ${count}.`
 //         );
-// arr.push(count);
-// console.log("is the count working?");
-// // resolve(count);
-// return arr;
-// }
-// }
-// );
-// }
-//   );
+//         resolve(count);
+//       }
+//     });
+//   });
 // };
 
-var tokenCount = function () {
-  if (DEBUG) console.log("token.tokenCount()");
-
-  return new Promise(function (resolve, reject) {
-    fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
-      if (error) reject(error);
-      else {
-        let tokens = JSON.parse(data);
-
-        let count = Object.keys(tokens).length;
-
-        console.log(`Current token count is ${count}.`);
-
-        myEmitter.emit(
-          "log",
-          "token.tokenCount()",
-          "TOKEN_INFO",
-          `Current token count is ${count}.`
-        );
-        resolve(count);
-      }
-    });
+const tokenCount = () => {
+  fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
+    if (error) throw error;
+    let tokens = JSON.parse(data);
+    let count = tokens.length;
+    myEmitter.emit(
+      "log",
+      "token.tokenCount()",
+      "TOKEN_INFO",
+      `Current token count is ${count}.`
+    );
+    console.log(`Number of tokens: ${count}`);
   });
 };
 
@@ -102,13 +94,13 @@ async function newToken(username) {
     console.log(`Token already exists. Please use ${result[1].token}`);
   } else {
     let newToken = JSON.parse(`{
-        "created": "1969-01-31 12:30:00", 
-        "username": "username",
-        "email": "user@example.com",
-        "phone": "5556597890",
-        "token": "token",
-        "expires": "1969-02-03 12:30:00",
-        "confirmed": "tbd"
+        "created": "", 
+        "username": "",
+        "email": "user@email.com",
+        "phone": "1231231234",
+        "token": "",
+        "expires": "",
+        "confirmed": "false"
     }`);
 
     let now = new Date();
@@ -200,11 +192,10 @@ const expiryCheck = () => {
 
 const fetchRecord = async function (record) {
   let arr = [];
-  console.log(record);
   let result = await existCheck(record);
-  if (result[0] == false) {
+  // console.log(result);
+  if (result[0] === false) {
     console.log("Record does not exist");
-    console.log(result);
   } else {
     let username = result[1].username;
     let created = result[1].created;
@@ -213,9 +204,12 @@ const fetchRecord = async function (record) {
     let token = result[1].token;
     let expires = result[1].expires;
     let confirmed = result[1].confirmed;
-    console.log(username);
+    // console.log(username);
+    // console.log(phone);
     let rec = `Username: ${username}, Created: ${created}, Email: ${email}, Phone: ${phone}, Token: ${token}, Expires: ${expires}, Confirmed: ${confirmed}`;
-
+    console.log(
+      `\nUsername: ${username}\nCreated: ${created}\nEmail: ${email}\nPhone: ${phone}\nToken: ${token}\nExpires: ${expires}\nConfirmed: ${confirmed}\n`
+    );
     return rec;
   }
 };
@@ -225,7 +219,7 @@ const searchRecord = async function (record) {
   let result = await existCheck(record);
   if (result[0] == false) {
     console.log("Record does not exist");
-    console.log(result);
+    // console.log(result);
   } else console.log(result[1].token);
 };
 

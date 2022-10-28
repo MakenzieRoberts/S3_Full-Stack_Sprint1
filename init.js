@@ -1,3 +1,11 @@
+/*----------------------------------------------------------------------
+File Name: init.js
+Purpose: The main routines to start the initialization app
+Commands: see usage.txt file
+Created Date: October 21, 2022
+Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
+------------------------------------------------------------------------*/
+
 const fs = require("fs");
 const fsPromises = require("fs").promises;
 const path = require("path");

@@ -1,18 +1,11 @@
-/*************************
- * File Name: myapp.js
- * Purpose: The main routines to start the initialization app
- *
- * Commands:
- * see usage.txt file
- *
- * Created Date: 09 Jan 2022
- * Authors:
- * PJR - Peter Rawsthorne
- * Revisions:
- * Date, Author, Description
- * 09 Jan 2022, PJR, File created
- *
- *************************/
+/*----------------------------------------------------------------------
+File Name: myapp.js
+Purpose: The main routines to start the initialization app
+Commands: see usage.txt file
+Created Date: October 21, 2022
+Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
+------------------------------------------------------------------------*/
+
 // DT: Global.Debug, this set as true will show if its a successful run of the node myapp init for example or any CLI command available
 // , false will not show, basically an On/Off
 global.DEBUG = false;

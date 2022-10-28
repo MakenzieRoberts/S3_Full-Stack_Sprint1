@@ -1,18 +1,10 @@
-/*************************
- * File Name: logEvents.js
- * Purpose: To provide a logging feature
- *
- * Created Date: 22 Jan 2022
- * Authors:
- * PJR - Peter Rawsthorne
- * Revisions:
- * Date, Author, Description
- * 22 Jan 2022, PJR, File created
- * 25 Jan 2022, PJR, add date to log file name
- *      implement DEBUG global
- * 19 Oct 2022, PJR, stole the logEvents from another project
- *
- *************************/
+/*----------------------------------------------------------------------
+File Name: logEvents.js
+Purpose: To provide a logging feature to specific dot log files
+Commands: see usage.txt file
+Created Date: October 21, 2022
+Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
+------------------------------------------------------------------------*/
 
 // NPM installed Modules
 const { format } = require("date-fns");

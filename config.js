@@ -1,3 +1,12 @@
+/*----------------------------------------------------------------------
+File Name: myapp.js
+Purpose: Sets the config file upon app initialization and alteration of
+         attributes and values within the file
+Commands: see usage.txt file
+Created Date: October 21, 2022
+Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
+------------------------------------------------------------------------*/
+
 // Add logging to the CLI project by using eventLogging
 // load the logEvents module
 const logEvents = require("./logEvents");
