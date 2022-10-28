@@ -24,8 +24,6 @@ const { tokenApp, expiryCheck } = require("./token.js");
 const myArgs = process.argv.slice(2);
 if (DEBUG) if (myArgs.length >= 1) console.log("the myapp.args: ", myArgs);
 
-
-
 //Token validation occurs every time app is loaded
 expiryCheck();
 
@@ -48,7 +46,7 @@ switch (myArgs[0]) {
   case "--help":
   case "--h":
   default:
-    fs.readFile(__dirname + "/usage.txt", (error, data) => {
+    fs.readFile(__dirname + "/views/usage.txt", (error, data) => {
       if (error) throw error;
       console.log(data.toString());
     });

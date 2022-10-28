@@ -1,23 +1,24 @@
-//  Handles all functions related to token creation, querying and expiration. 
+//  Handles all functions related to token creation, querying and expiration.
 
-//
+//  Import core modules
 const fs = require("fs");
 const fsPromises = require("fs").promises;
-
+//  Create event emitter
 const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
+//  Import logger and set to on
+const logEvents = require("./logEvents");
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
+//  Dependencies for dates and hashing tokens
 const crc32 = require("crc/crc32");
 const { format } = require("date-fns");
-
-const logEvents = require("./logEvents");
 
 const myArgs = process.argv.slice(2);
 
 let arr = [];
-let tokenCount = function () {
+const tokenCount = () => {
   if (DEBUG) console.log("token.tokenCount()");
   // return new Promise(function (resolve, reject) {
   fsPromises.readFile(
@@ -45,7 +46,7 @@ let tokenCount = function () {
   );
 };
 
-function tokenList() {
+const tokenList = () => {
   if (DEBUG) console.log("token.tokenList()");
   fs.readFile(__dirname + "/data/tokens.json", "utf-8", (error, data) => {
     if (error) throw error;
@@ -61,24 +62,24 @@ function tokenList() {
       `Current token list was displayed.`
     );
   });
-}
+};
 
 // Calculates the expiration date for new tokens
-function addDays(date, days) {
+const addDays = (date, days) => {
   let result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
-}
+};
 
 // Creates a new token if one doesn't exist
-async function newToken(username) {
+const newToken = async (username) => {
   if (DEBUG) console.log("token.newToken()");
 
   // Check for existing user
   let result = await existCheck(username);
   if (result[0] == true) {
     console.log(`Token already exists. Please use ${result[1].token}`);
-    return "Token already exists." 
+    return "Token already exists.";
   } else {
     // Create the new token object with template objects
     // TODO: Add form inputs for other info
@@ -91,7 +92,7 @@ async function newToken(username) {
         "expires": "1969-02-03 12:30:00",
         "confirmed": "false"
     }`);
-  
+
     //  Assign provided sername
     newToken.username = username;
     //  Assign creation date
@@ -130,7 +131,7 @@ async function newToken(username) {
     });
     return newToken.token;
   }
-}
+};
 
 // Checks if token exists and returns an array
 const existCheck = async (username) => {
@@ -192,17 +193,24 @@ const getRecord = async function (username) {
   if (DEBUG) console.log("token.getRecord()");
   let result = await existCheck(username);
   if (result[0] == false) {
-    return "No record could be found."
-  } else return  result[1];
+    console.log("No result found.");
+    return "No record could be found.";
+  } else {
+    console.log(result[1]);
+    return result[1];
+  }
 };
 
-//  
+//
 const searchToken = async function (username) {
   let result = await existCheck(username);
   if (result[0] == false) {
-    return "Token does not exist"
-  } else 
-  return result[1].token;
+    console.log("Token does not exist.");
+    return "Token does not exist";
+  } else {
+    console.log(result[1].username);
+    return result[1].username;
+  }
 };
 
 //  Command line interface application
