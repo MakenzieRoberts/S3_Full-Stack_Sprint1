@@ -1,3 +1,11 @@
+/*----------------------------------------------------------------------
+File Name: server.js
+Purpose: Allows a access/path to a server with a user interface
+Commands: see usage.txt file
+Created Date: October 21, 2022
+Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
+------------------------------------------------------------------------*/
+
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3500;
