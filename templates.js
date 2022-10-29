@@ -1,4 +1,7 @@
-const folders = ["models", "views", "routes", "logs", "json"];
+// These templates are called on during the initialization project to allow for file writing.
+
+// Folders required
+const folders = ["json", "views", "logs"];
 
 const configjson = {
   name: "AppConfigCLI",
@@ -16,8 +19,8 @@ const tokenjson = [
     email: "user@example.com",
     phone: "5556597890",
     token: "token",
-    expires: "1969-02-03 12:30:00",
-    confirmed: "tbd",
+    expires: "3000-02-03 12:30:00",
+    confirmed: "false",
   },
 ];
 

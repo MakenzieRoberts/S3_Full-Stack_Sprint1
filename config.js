@@ -1,22 +1,25 @@
-// Add logging to the CLI project by using eventLogging
-// load the logEvents module
+// This file contains functions that handle changes to the configuration settings
+
+// Load in the logger
 const logEvents = require("./logEvents");
 
-// define/extend an EventEmitter class
+// Create an event emitter to pass through to the logger
 const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
-// initialize an new emitter object
 const myEmitter = new MyEmitter();
-// add the listener for the logEvent
+// Set the listener to log
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
 // Node.js common core global modules
 const fs = require("fs");
-const fsPromises = require("fs").promises;
-const path = require("path");
+
+// Slice for CLI arguments
 const myArgs = process.argv.slice(2);
+
+// Import templates config
 const { configjson } = require("./templates");
 
+// Updates configuration settings from file
 function setConfig() {
   if (DEBUG) console.log("config.setConfig()");
   if (DEBUG) console.log(myArgs);
@@ -37,7 +40,7 @@ function setConfig() {
       myEmitter.emit(
         "log",
         "config.setConfig()",
-        "WARNING",
+        "CONFIG_WARNING",
         `invalid key: ${myArgs[2]}`
       );
     } else {
@@ -45,41 +48,59 @@ function setConfig() {
       data = JSON.stringify(cfg, null, 2);
       fs.writeFile(__dirname + "/json/config.json", data, (error) => {
         if (error) throw error;
-        console.log("Config file successfully updated.");
+        console.log("Attribute value in Config file successfully updated.");
         myEmitter.emit(
           "log",
           "config.setConfig()",
-          "INFO",
-          `config.json "${myArgs[2]}": updated to "${myArgs[3]}"`
+          "CONFIG_INFO",
+          `config.json "${myArgs[2]}": value updated to "${myArgs[3]}"`
         );
       });
     }
   });
 }
 
+// Sets a new configuration file
 function newConfig() {
-  if (DEBUG) console.log("config.setConfig()");
+  if (DEBUG) console.log("config.newConfig()");
   if (DEBUG) console.log(myArgs);
+  let match = false;
   fs.readFile(__dirname + "/json/config.json", (error, data) => {
     if (error) throw error;
     if (DEBUG) console.log(JSON.parse(data));
     let att = JSON.parse(data);
-    let key = myArgs[2];
-    att[key] = "";
-    data = JSON.stringify(att, null, 2);
-    fs.writeFile(__dirname + "/json/config.json", data, (error) => {
-      if (error) throw error;
-      console.log("Config file successfully updated.");
+    for (let key of Object.keys(att)) {
+      if (key === myArgs[2]) {
+        match = true;
+      }
+    }
+    if (match === true) {
+      console.log(myArgs[2] + " attribute already exists try another");
       myEmitter.emit(
         "log",
-        "config.setConfig()",
-        "INFO",
-        `config.json "${myArgs[2]}": updated`
+        "config.newConfig()",
+        "CONFIG_WARNING",
+        `Duplicated attribute: ${myArgs[2]}`
       );
-    });
+    } else {
+      let key = myArgs[2];
+      att[key] = "";
+      data = JSON.stringify(att, null, 2);
+      fs.writeFile(__dirname + "/json/config.json", data, (error) => {
+        if (error) throw error;
+        console.log("Config file successfully updated.");
+        myEmitter.emit(
+          "log",
+          "config.newConfig()",
+          "CONFIG_INFO",
+          `config.json "${myArgs[2]}": attribute added`
+        );
+      });
+    }
   });
 }
 
+// Reset configuration file to template
 function resetConfig() {
   if (DEBUG) console.log("config.resetConfig()");
   let configdata = JSON.stringify(configjson, null, 2);
@@ -89,12 +110,13 @@ function resetConfig() {
     myEmitter.emit(
       "log",
       "config.resetConfig()",
-      "INFO",
+      "CONFIG_INFO",
       "config.json reset to original state."
     );
   });
 }
 
+// Display configuration
 function displayConfig() {
   if (DEBUG) console.log("config.displayConfig()");
   fs.readFile(__dirname + "/json/config.json", (error, data) => {
@@ -104,17 +126,18 @@ function displayConfig() {
   myEmitter.emit(
     "log",
     "config.displayConfig()",
-    "INFO",
+    "CONFIG_INFO",
     "config.json displayed"
   );
 }
 
+// Configuration command line application
 function configApp() {
   if (DEBUG) console.log("configApp()");
   myEmitter.emit(
     "log",
     "config.configApp()",
-    "INFO",
+    "CONFIG_INFO",
     "config option was called by CLI"
   );
 
@@ -145,7 +168,7 @@ function configApp() {
       myEmitter.emit(
         "log",
         "config.configApp()",
-        "INFO",
+        "CONFIG_WARNING",
         "invalid CLI option, usage displayed"
       );
   }

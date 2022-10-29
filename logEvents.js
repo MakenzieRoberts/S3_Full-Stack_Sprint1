@@ -84,6 +84,9 @@ const logEvents = async (event, level, message) => {
         logItem + "\n"
       );
     }
-}
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 module.exports = logEvents;
