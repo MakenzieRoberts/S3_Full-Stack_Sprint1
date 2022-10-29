@@ -4,8 +4,7 @@ logs
 npm-debug.log*
 
 # Data
-json
-tokens.json
+*.json
 
 # Dependency directories
 node_modules/

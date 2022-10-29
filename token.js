@@ -1,4 +1,5 @@
 //  Handles all functions related to token creation, querying and expiration.
+//  These functions are run by both the command line interface and the web form.
 
 //  Import core modules
 const fs = require("fs");
@@ -17,6 +18,7 @@ const { format } = require("date-fns");
 //  Slice for CLI
 const myArgs = process.argv.slice(2);
 
+//  Returns a count of total tokens saved in tokens.json
 const tokenCount = () => {
   let arr = [];
   if (DEBUG) console.log("token.tokenCount()");
@@ -28,7 +30,7 @@ const tokenCount = () => {
       if (error) reject(error);
       else {
         let tokens = JSON.parse(data);
-        let count = Object.keys(tokens).length;
+        let count = Object.keys(tokens).length - 1; // Subtract in order to prevent counting the template
         console.log(`Current token count is ${count}.`);
         myEmitter.emit(
           "log",

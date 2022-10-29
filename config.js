@@ -1,12 +1,13 @@
-// Add logging to the CLI project by using eventLogging
-// load the logEvents module
+// This file contains functions that handle changes to the configuration settings
+
+// Load in the logger
 const logEvents = require("./logEvents");
 
-// Create an event emitter
+// Create an event emitter to pass through to the logger
 const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
-// add the listener for logging
+// Set the listener to log
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
 // Node.js common core global modules
@@ -61,7 +62,7 @@ function setConfig() {
   });
 }
 
-// Sets a new configuration file 
+// Sets a new configuration file
 function newConfig() {
   if (DEBUG) console.log("config.newConfig()");
   if (DEBUG) console.log(myArgs);

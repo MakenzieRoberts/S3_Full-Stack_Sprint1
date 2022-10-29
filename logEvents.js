@@ -1,13 +1,15 @@
-// Logs events as called by an event emitter
-// NPM installed Modules
+//  Logs events as called by an event emitter
+
+//  Import dependencies
 const { format } = require("date-fns");
 const { v4: uuid } = require("uuid");
 
-// Node.js common core global modules
+//  Import core modules
 const fs = require("fs");
 const fsPromises = require("fs").promises;
 const path = require("path");
 
+//  Log events with date and time
 const logEvents = async (event, level, message) => {
   const dateTime = `${format(new Date(), "yyyyMMdd\tHH:mm:ss")}`;
   const logItem = `${dateTime}\t${level}\t${event}\t${message}\t${uuid()}`;
