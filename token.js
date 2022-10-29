@@ -71,7 +71,16 @@ async function newToken(username) {
 
   // Change this below:
   if (result[0] == true) {
-    console.log(`Token already exists. Please use ${result[1].token}`);
+    console.log(
+      `A token already exists for this user. Please use the search option.`
+    );
+    myEmitter.emit(
+      "log",
+      "token.newToken()",
+      "TOKEN_WARNING",
+      `Token for ${username} already exists.`
+    );
+    return "A token already exists for this user. Please use the search option.";
   } else {
     let newToken = JSON.parse(`{
         "created": "1969-01-31 12:30:00", 
@@ -129,19 +138,42 @@ const existCheck = async (username) => {
     );
     const tokens = JSON.parse(readTokens);
     for (let i = 0; i < tokens.length; i++) {
-      let tokenUsername = tokens[i].username;
-      if (tokenUsername == username) {
-        tokenExists = true;
-        existingToken = tokens[i];
-        arr.push(tokenExists, existingToken);
-        return arr;
+      // Search for a username match
+      if (tokens[i].username == username) {
+        let tokenExp = Date.parse(tokens[i].expires); //  Convert token expiry dates to ISO format
+        if (tokenExp + 259200000 <= todayStr) {
+          //  If token expiry date is in the past
+          tokens.splice(i, 1); //  Remove the element from data file
+          let userTokens = JSON.stringify(tokens); // Write edited file back to disk
+          fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
+            if (err) throw err;
+          });
+          arr.push(tokenExists);
+          myEmitter.emit(
+            "log",
+            "token.newToken()",
+            "TOKEN_INFO",
+            `Expired token ${newToken.token} was removed for ${username}.`
+          );
+          return arr;
+        } else {
+          tokenExists = true;
+          arr.push(tokenExists, tokens[i]);
+          // Returns the existing token for requested username
+          return arr;
+        }
       }
-      tokenExists = false;
     }
   } catch (err) {
     throw err;
   }
   arr.push(tokenExists);
+  myEmitter.emit(
+    "log",
+    "token.newToken()",
+    "TOKEN_WARNING",
+    `No token exists for ${username}.`
+  );
   return arr;
 };
 
@@ -175,20 +207,25 @@ const fetchRecord = async function (record) {
   console.log(record);
   let result = await existCheck(record);
   if (result[0] == false) {
-    console.log("Record does not exist");
-    console.log(result);
+    //  If no match found
+    console.log("No result found.");
+    myEmitter.emit(
+      "log",
+      "token.fetchRecord()",
+      "TOKEN_WARNING",
+      `Record for ${record} was NOT fetched.`
+    );
+    return "No record could be found.";
   } else {
-    let username = result[1].username;
-    let created = result[1].created;
-    let email = result[1].email;
-    let phone = result[1].phone;
-    let token = result[1].token;
-    let expires = result[1].expires;
-    let confirmed = result[1].confirmed;
-    console.log(username);
-    let rec = `Username: ${username}, Created: ${created}, Email: ${email}, Phone: ${phone}, Token: ${token}, Expires: ${expires}, Confirmed: ${confirmed}`;
-
-    return rec;
+    // Return match
+    console.log(result[1]);
+    myEmitter.emit(
+      "log",
+      "token.fetchRecord()",
+      "TOKEN_INFO",
+      `Record for ${username} was fetched.`
+    );
+    return result[1];
   }
   // return "Kara";
 };
@@ -197,9 +234,26 @@ const searchRecord = async function (record) {
   console.log(record);
   let result = await existCheck(record);
   if (result[0] == false) {
-    console.log("Record does not exist");
-    console.log(result);
-  } else console.log(result[1].token);
+    //  If no match found
+    console.log("Token does not exist.");
+    myEmitter.emit(
+      "log",
+      "token.searchRecord()",
+      "TOKEN_WARNING",
+      `Token for ${record} was NOT retrieved.`
+    );
+    return "Token does not exist";
+  } else {
+    //  Return match
+    console.log(`Token for username [${username}]: ${result[1].token}`);
+    myEmitter.emit(
+      "log",
+      "token.searchRecord()",
+      "TOKEN_INFO",
+      `Token for ${record} was retrieved.`
+    );
+    return result[1].token;
+  }
 };
 
 function tokenApp() {
@@ -207,7 +261,7 @@ function tokenApp() {
   myEmitter.emit(
     "log",
     "token.tokenApp()",
-    "INFO",
+    "TOKEN_INFO",
     "token option was called by CLI"
   );
 
