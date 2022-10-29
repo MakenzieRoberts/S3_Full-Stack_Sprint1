@@ -1,3 +1,6 @@
+//  Handles all functions related to token creation, querying and expiration.
+//  These functions are run by both the command line interface and the web form.
+
 //  Import core modules
 const fs = require("fs");
 const fsPromises = require("fs").promises;
