@@ -86,12 +86,16 @@ function addDays(date, days) {
 
 async function newToken(username) {
   if (DEBUG) console.log("token.newToken()");
-
   let result = await existCheck(username);
-
   // Change this below:
   if (result[0] == true) {
     console.log(`Token already exists. Please use ${result[1].token}`);
+    myEmitter.emit(
+      "log",
+      "token.newToken()",
+      "TOKEN_WARNING",
+      `Token for ${username} already exists.`
+    );
   } else {
     let newToken = JSON.parse(`{
         "created": "", 
@@ -191,11 +195,17 @@ const expiryCheck = () => {
 };
 
 const fetchRecord = async function (record) {
-  let arr = [];
+  // let arr = [];
   let result = await existCheck(record);
-  // console.log(result);
+  console.log(record);
   if (result[0] === false) {
     console.log("Record does not exist");
+    myEmitter.emit(
+      "log",
+      "token.fetchRecord()",
+      "TOKEN_WARNING",
+      `Record for ${record} was NOT fetched.`
+    );
   } else {
     let username = result[1].username;
     let created = result[1].created;
@@ -210,17 +220,35 @@ const fetchRecord = async function (record) {
     console.log(
       `\nUsername: ${username}\nCreated: ${created}\nEmail: ${email}\nPhone: ${phone}\nToken: ${token}\nExpires: ${expires}\nConfirmed: ${confirmed}\n`
     );
+    myEmitter.emit(
+      "log",
+      "token.fetchRecord()",
+      "TOKEN_INFO",
+      `Record for ${username} was fetched.`
+    );
     return rec;
   }
 };
 
 const searchRecord = async function (record) {
-  console.log(record);
+  // console.log(record);
   let result = await existCheck(record);
   if (result[0] == false) {
     console.log("Record does not exist");
+    myEmitter.emit(
+      "log",
+      "token.searchRecord()",
+      "TOKEN_WARNING",
+      `Token for ${record} was NOT retrieved.`
+    );
     // console.log(result);
   } else console.log(result[1].token);
+  myEmitter.emit(
+    "log",
+    "token.searchRecord()",
+    "TOKEN_INFO",
+    `Token for ${record} was retrieved.`
+  );
 };
 
 function tokenApp() {
