@@ -1,7 +1,7 @@
 // These controllers route the web request to use the same functions employed by the command line interface, keeping our code DRY.
 // Note they return JSON format, should we choose to style our responses this will make it easier to have modular components.
 
-const { newToken, getRecord, searchToken } = require("../token.js");
+const { newToken, getRecord, searchToken } = require("./token.js");
 
 // Handles new user requests.
 const createUser = async (req, res) => {

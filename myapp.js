@@ -11,9 +11,9 @@
  *  2. Input "npm i" to install required dependencies
  *  3. Input "node myapp init --all" to initialize and install application
  *  4. Input "node myapp" for a detailed list of commands to then use
- *  5. In a separate terminal, navidate to file directory containing app.
  *  NOTE: Should you wish to recieve detailed console logging, set global.DEBUG to true (line 36)
  * Additional server instructions:
+ *  5. In a separate terminal, navidate to file directory containing app.
  *  6. Input "node server" to run web server.
  *  7. Navigate in a web browser to "localhost:3500"
  *  8. The webform will allow the user to generate, display and search tokens and user records.

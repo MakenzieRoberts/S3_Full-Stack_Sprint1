@@ -8,7 +8,7 @@ const fsPromises = require("fs").promises;
 const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
-//  Import logger and set to on
+//  Import logger and set emitter
 const logEvents = require("./logEvents");
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
@@ -45,6 +45,7 @@ const tokenCount = () => {
   );
 };
 
+//  Lists all tokens for administrator readout
 const tokenList = () => {
   if (DEBUG) console.log("token.tokenList()");
   fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
@@ -87,7 +88,7 @@ const newToken = async (username) => {
     let newToken = JSON.parse(`{
         "created": "1969-01-31 12:30:00", 
         "username": "username",
-         "email": "user@example.com",
+        "email": "user@example.com",
         "phone": "5556597890",
         "token": "token",
         "expires": "1969-02-03 12:30:00",
@@ -154,20 +155,18 @@ const existCheck = async (username) => {
     );
     const tokens = JSON.parse(readTokens);
 
-    // Iterate through data incerementally
+    // Iterate through data
     for (let i = 0; i < tokens.length; i++) {
       // Search for a username match
       if (tokens[i].username == username) {
         let tokenExp = Date.parse(tokens[i].expires); //  Convert token expiry dates to ISO format
         if (tokenExp + 259200000 <= todayStr) {
-          //  Check if expiry date has elapsed
+          //  If token expiry date is in the past
           tokens.splice(i, 1); //  Remove the element from data file
-
           let userTokens = JSON.stringify(tokens); // Write edited file back to disk
           fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
             if (err) throw err;
           });
-          tokenExists = false;
           arr.push(tokenExists);
           return arr;
         } else {
