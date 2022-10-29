@@ -1,13 +1,7 @@
-/*----------------------------------------------------------------------
-File Name: templates.js
-Purpose: During initilization and resets this module is accessed to 
-         create folders, certain files and reset the config file.
-Commands: see usage.txt file
-Created Date: October 21, 2022
-Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
-------------------------------------------------------------------------*/
+// These templates are called on during the initialization project to allow for file writing.
 
-const folders = ["models", "views", "routes", "logs", "json"];
+// Folders required
+const folders = ["json", "views", "logs"];
 
 const configjson = {
   name: "AppConfigCLI",
@@ -18,7 +12,17 @@ const configjson = {
   database: "exampledb",
 };
 
-const tokenjson = [];
+const tokenjson = [
+  {
+    created: "1969-01-31 12:30:00",
+    username: "username",
+    email: "user@example.com",
+    phone: "5556597890",
+    token: "token",
+    expires: "3000-02-03 12:30:00",
+    confirmed: "false",
+  },
+];
 
 const usagetxt = `
 

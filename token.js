@@ -1,66 +1,52 @@
-/*----------------------------------------------------------------------
-File Name: token.js
-Purpose: Creates tokens when a new user is added to the dot json file
-         and allows for serches and deletes
-Commands: see usage.txt file
-Created Date: October 21, 2022
-Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
-------------------------------------------------------------------------*/
+//  Handles all functions related to token creation, querying and expiration.
+//  These functions are run by both the command line interface and the web form.
 
-const logEvents = require("./logEvents");
+//  Import core modules
+const fs = require("fs");
+const fsPromises = require("fs").promises;
+//  Create event emitter
 const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
+//  Import logger and set emitter
+const logEvents = require("./logEvents");
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
-const fs = require("fs");
-const fsPromises = require("fs").promises;
+//  Dependencies for dates and hashing tokens
 const crc32 = require("crc/crc32");
 const { format } = require("date-fns");
-
+//  Slice for CLI
 const myArgs = process.argv.slice(2);
 
-// var tokenCount = function () {
-//   if (DEBUG) console.log("token.tokenCount()");
-
-//   return new Promise(function (resolve, reject) {
-//     fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
-//       if (error) reject(error);
-//       else {
-//         let tokens = JSON.parse(data);
-
-//         let count = Object.keys(tokens).length;
-
-//         console.log(`Current token count is ${count}.`);
-
-//         myEmitter.emit(
-//           "log",
-//           "token.tokenCount()",
-//           "TOKEN_INFO",
-//           `Current token count is ${count}.`
-//         );
-//         resolve(count);
-//       }
-//     });
-//   });
-// };
-
+//  Returns a count of total tokens saved in tokens.json
 const tokenCount = () => {
-  fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
-    if (error) throw error;
-    let tokens = JSON.parse(data);
-    let count = tokens.length;
-    myEmitter.emit(
-      "log",
-      "token.tokenCount()",
-      "TOKEN_INFO",
-      `Current token count is ${count}.`
-    );
-    console.log(`Number of tokens: ${count}`);
-  });
+  let arr = [];
+  if (DEBUG) console.log("token.tokenCount()");
+  // return new Promise(function (resolve, reject) {
+  fsPromises.readFile(
+    __dirname + "/json/tokens.json",
+    "utf-8",
+    (error, data) => {
+      if (error) reject(error);
+      else {
+        let tokens = JSON.parse(data);
+        let count = Object.keys(tokens).length - 1; // Subtract in order to prevent counting the template
+        console.log(`Current token count is ${count}.`);
+        myEmitter.emit(
+          "log",
+          "token.tokenCount()",
+          "INFO",
+          `Current token count is ${count}.`
+        );
+        arr.push(count);
+        return arr;
+      }
+    }
+  );
 };
 
-function tokenList() {
+//  Lists all tokens for administrator readout
+const tokenList = () => {
   if (DEBUG) console.log("token.tokenList()");
   fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
     if (error) throw error;
@@ -76,58 +62,66 @@ function tokenList() {
       `Current token list was displayed.`
     );
   });
-}
+};
 
-function addDays(date, days) {
+// Calculates the expiration date for new tokens
+const addDays = (date, days) => {
   let result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
-}
+};
 
-async function newToken(username) {
+// Creates a new token if one doesn't exist
+const newToken = async (username) => {
   if (DEBUG) console.log("token.newToken()");
+
+  // Check for existing user
   let result = await existCheck(username);
-  // Change this below:
   if (result[0] == true) {
-    console.log(`Token already exists. Please use ${result[1].token}`);
-    myEmitter.emit(
-      "log",
-      "token.newToken()",
-      "TOKEN_WARNING",
-      `Token for ${username} already exists.`
+    console.log(
+      `A token already exists for this user. Please use the search option.`
     );
+    return "A token already exists for this user. Please use the search option.";
   } else {
+    // Create the new token object with template objects
+    // TODO: Add form inputs for other info
     let newToken = JSON.parse(`{
-        "created": "", 
-        "username": "",
-        "email": "user@email.com",
-        "phone": "1231231234",
-        "token": "",
-        "expires": "",
+        "created": "1969-01-31 12:30:00", 
+        "username": "username",
+        "email": "user@example.com",
+        "phone": "5556597890",
+        "token": "token",
+        "expires": "1969-02-03 12:30:00",
         "confirmed": "false"
     }`);
 
-    let now = new Date();
-    let expires = addDays(now, 3);
-
+    //  Assign provided username
     newToken.username = username;
-
+    //  Assign creation date
+    let now = new Date();
     newToken.created = `${format(now, "yyyy-MM-dd HH:mm:ss")}`;
+    //  Create hashed token using CRC32 library
     newToken.token = crc32(username).toString(16);
+    //  Determine expiration date
+    let expires = addDays(now, 3);
     newToken.expires = `${format(expires, "yyyy-MM-dd HH:mm:ss")}`;
 
+    //  Read from Tokens database
     fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
       if (error) throw error;
+      //  Add token to extant collection of data
       let tokens = JSON.parse(data);
       tokens.push(newToken);
       let userTokens = JSON.stringify(tokens);
 
+      // Write the newly changed data back to the database
       fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
         if (err) console.log(err);
         else {
           console.log(
             `New token ${newToken.token} was created for ${username}.`
           );
+          //  Log the new event
           myEmitter.emit(
             "log",
             "token.newToken()",
@@ -139,118 +133,90 @@ async function newToken(username) {
     });
     return newToken.token;
   }
-}
+};
 
-// Checks for existing token and returns ___?
+// Checks if token exists and returns an array.
+// The first index is always a boolean true/false.
+// The second index is an object but only when the first index is false.
 const existCheck = async (username) => {
   if (DEBUG) console.log("tokens.existCheck()");
+
+  // Set checker to false and instantiate empty array
   let tokenExists = false;
   let arr = [];
+
+  let today = new Date(); // Create today's date variable
+  todayStr = Date.parse(today); //  Convert todays date to ISO format
   try {
+    // Read tokens data file
     const readTokens = await fsPromises.readFile(
       __dirname + "/json/tokens.json",
       "utf8"
     );
     const tokens = JSON.parse(readTokens);
+
+    // Iterate through data
     for (let i = 0; i < tokens.length; i++) {
-      let tokenUsername = tokens[i].username;
-      if (tokenUsername == username) {
-        tokenExists = true;
-        existingToken = tokens[i];
-        arr.push(tokenExists, existingToken);
-        return arr;
+      // Search for a username match
+      if (tokens[i].username == username) {
+        let tokenExp = Date.parse(tokens[i].expires); //  Convert token expiry dates to ISO format
+        if (tokenExp + 259200000 <= todayStr) {
+          //  If token expiry date is in the past
+          tokens.splice(i, 1); //  Remove the element from data file
+          let userTokens = JSON.stringify(tokens); // Write edited file back to disk
+          fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
+            if (err) throw err;
+          });
+          arr.push(tokenExists);
+          return arr;
+        } else {
+          tokenExists = true;
+          arr.push(tokenExists, tokens[i]);
+          // Returns the existing token for requested username
+          return arr;
+        }
       }
-      tokenExists = false;
     }
   } catch (err) {
     throw err;
   }
+  // Push false to first index if no matches found
   arr.push(tokenExists);
   return arr;
 };
 
-// Checks for expired tokens and removes them from the database
-// TODO: does not run at same time as calling newToken
-const expiryCheck = () => {
-  if (DEBUG) console.log("token.expiryCheck()");
-
-  // Find tokens json file
-  fs.readFile(__dirname + "/json/tokens.json", "utf8", (error, data) => {
-    if (error) throw error;
-    let today = new Date();
-    todayStr = Date.parse(today); // Convert todays date to ISO format
-    const tokens = JSON.parse(data); // Parse JSON to string
-    for (let i = 0; i < tokens.length; i++) {
-      let tokenExp = Date.parse(tokens[i].expires); // Convert token expiry dates to ISO format
-      if (tokenExp + 259200000 <= todayStr) {
-        // Check if expiry date has elapsed
-        tokens.splice(i, 1);
-      } // Remove the element from tokens
-    }
-    userTokens = JSON.stringify(tokens);
-    fs.writeFile(__dirname + "/json/tokens.json", userTokens, (err) => {
-      if (err) throw err;
-    });
-  });
-};
-
-const fetchRecord = async function (record) {
-  // let arr = [];
-  let result = await existCheck(record);
-  console.log(record);
-  if (result[0] === false) {
-    console.log("Record does not exist");
-    myEmitter.emit(
-      "log",
-      "token.fetchRecord()",
-      "TOKEN_WARNING",
-      `Record for ${record} was NOT fetched.`
-    );
+// Fetches record based on username input
+const getRecord = async function (username) {
+  if (DEBUG) console.log("token.getRecord()");
+  //  Check for username in database
+  let result = await existCheck(username);
+  if (result[0] == false) {
+    //  If no match found
+    console.log("No result found.");
+    return "No record could be found.";
   } else {
-    let username = result[1].username;
-    let created = result[1].created;
-    let email = result[1].email;
-    let phone = result[1].phone;
-    let token = result[1].token;
-    let expires = result[1].expires;
-    let confirmed = result[1].confirmed;
-    // console.log(username);
-    // console.log(phone);
-    let rec = `Username: ${username}, Created: ${created}, Email: ${email}, Phone: ${phone}, Token: ${token}, Expires: ${expires}, Confirmed: ${confirmed}`;
-    console.log(
-      `\nUsername: ${username}\nCreated: ${created}\nEmail: ${email}\nPhone: ${phone}\nToken: ${token}\nExpires: ${expires}\nConfirmed: ${confirmed}\n`
-    );
-    myEmitter.emit(
-      "log",
-      "token.fetchRecord()",
-      "TOKEN_INFO",
-      `Record for ${username} was fetched.`
-    );
-    return rec;
+    // Return match
+    console.log(result[1]);
+    return result[1];
   }
 };
 
-const searchRecord = async function (record) {
-  // console.log(record);
-  let result = await existCheck(record);
+//  Search for token by username
+const searchToken = async function (username) {
+  //  Check for username in database
+  let result = await existCheck(username);
   if (result[0] == false) {
-    console.log("Record does not exist");
-    myEmitter.emit(
-      "log",
-      "token.searchRecord()",
-      "TOKEN_WARNING",
-      `Token for ${record} was NOT retrieved.`
-    );
-    // console.log(result);
-  } else console.log(result[1].token);
-  myEmitter.emit(
-    "log",
-    "token.searchRecord()",
-    "TOKEN_INFO",
-    `Token for ${record} was retrieved.`
-  );
+    //  If no match found
+    console.log("Token does not exist.");
+    return "Token does not exist";
+  } else {
+    //  Return match
+    console.log(`Token for username [${username}]: ${result[1].token}`);
+    return result[1].token;
+  }
 };
 
+//  Command line interface application
 function tokenApp() {
   if (DEBUG) console.log("tokenApp()");
   myEmitter.emit(
@@ -271,20 +237,16 @@ function tokenApp() {
       break;
     case "--new":
       if (DEBUG) console.log("token.newToken() --new");
-      existCheck();
-      expiryCheck();
       newToken(myArgs[2]);
       break;
     case "--fetch":
-      if (DEBUG) console.log("token.fetchRecord");
-      fetchRecord(myArgs[2]);
+      if (DEBUG) console.log("token.getRecord");
+      getRecord(myArgs[2]);
       break;
     case "--search":
       if (DEBUG) console.log("token.searchToken()");
-      searchRecord(myArgs[3]);
+      searchToken(myArgs[3]);
       break;
-    case "--help":
-    case "--h":
     default:
       fs.readFile(__dirname + "/views/token.txt", (error, data) => {
         if (error) throw error;
@@ -304,8 +266,7 @@ module.exports = {
   newToken,
   tokenCount,
   addDays,
-  expiryCheck,
   existCheck,
-  fetchRecord,
-  searchRecord,
+  getRecord,
+  searchToken,
 };

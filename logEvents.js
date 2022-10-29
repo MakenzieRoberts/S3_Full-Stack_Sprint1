@@ -1,20 +1,15 @@
-/*----------------------------------------------------------------------
-File Name: logEvents.js
-Purpose: To provide a logging feature to specific dot log files
-Commands: see usage.txt file
-Created Date: October 21, 2022
-Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
-------------------------------------------------------------------------*/
+//  Logs events as called by an event emitter
 
-// NPM installed Modules
+//  Import dependencies
 const { format } = require("date-fns");
 const { v4: uuid } = require("uuid");
 
-// Node.js common core global modules
+//  Import core modules
 const fs = require("fs");
 const fsPromises = require("fs").promises;
 const path = require("path");
 
+//  Log events with date and time
 const logEvents = async (event, level, message) => {
   const dateTime = `${format(new Date(), "yyyyMMdd\tHH:mm:ss")}`;
   const logItem = `${dateTime}\t${level}\t${event}\t${message}\t${uuid()}`;

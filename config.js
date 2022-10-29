@@ -1,31 +1,25 @@
-/*----------------------------------------------------------------------
-File Name: myapp.js
-Purpose: Sets the config file upon app initialization and alteration of
-         attributes and values within the file
-Commands: see usage.txt file
-Created Date: October 21, 2022
-Authors: Kara Balsom, Glen May, Makenzie Roberts, and David Turner
-------------------------------------------------------------------------*/
+// This file contains functions that handle changes to the configuration settings
 
-// Add logging to the CLI project by using eventLogging
-// load the logEvents module
+// Load in the logger
 const logEvents = require("./logEvents");
 
-// define/extend an EventEmitter class
+// Create an event emitter to pass through to the logger
 const EventEmitter = require("events");
 class MyEmitter extends EventEmitter {}
-// initialize an new emitter object
 const myEmitter = new MyEmitter();
-// add the listener for the logEvent
+// Set the listener to log
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
 // Node.js common core global modules
 const fs = require("fs");
-const fsPromises = require("fs").promises;
-const path = require("path");
+
+// Slice for CLI arguments
 const myArgs = process.argv.slice(2);
+
+// Import templates config
 const { configjson } = require("./templates");
 
+// Updates configuration settings from file
 function setConfig() {
   if (DEBUG) console.log("config.setConfig()");
   if (DEBUG) console.log(myArgs);
@@ -34,6 +28,7 @@ function setConfig() {
     if (error) throw error;
     if (DEBUG) console.log(JSON.parse(data));
     let cfg = JSON.parse(data);
+    // Check for correct input
     for (let key of Object.keys(cfg)) {
       if (key === myArgs[2]) {
         cfg[key] = myArgs[3];
@@ -50,6 +45,7 @@ function setConfig() {
         `invalid key: ${myArgs[2]}`
       );
     } else {
+      //  Update config file
       if (DEBUG) console.log(cfg);
       data = JSON.stringify(cfg, null, 2);
       fs.writeFile(__dirname + "/json/config.json", data, (error) => {
@@ -89,6 +85,7 @@ function setConfig() {
 //   });
 // }
 
+// Sets a new configuration file
 function newConfig() {
   if (DEBUG) console.log("config.newConfig()");
   if (DEBUG) console.log(myArgs);
@@ -130,6 +127,7 @@ function newConfig() {
   });
 }
 
+// Reset configuration file to template
 function resetConfig() {
   if (DEBUG) console.log("config.resetConfig()");
   let configdata = JSON.stringify(configjson, null, 2);
@@ -145,6 +143,7 @@ function resetConfig() {
   });
 }
 
+// Display configuration
 function displayConfig() {
   if (DEBUG) console.log("config.displayConfig()");
   fs.readFile(__dirname + "/json/config.json", (error, data) => {
@@ -159,6 +158,7 @@ function displayConfig() {
   );
 }
 
+// Configuration command line application
 function configApp() {
   if (DEBUG) console.log("configApp()");
   myEmitter.emit(
