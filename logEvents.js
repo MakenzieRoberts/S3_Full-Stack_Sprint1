@@ -7,6 +7,7 @@ const fs = require("fs");
 const fsPromises = require("fs").promises;
 const path = require("path");
 
+//  Log events with date and time
 const logEvents = async (event, level, message) => {
   const dateTime = `${format(new Date(), "yyyyMMdd\tHH:mm:ss")}`;
   const logItem = `${dateTime}\t${level}\t${event}\t${message}\t${uuid()}`;

@@ -1,7 +1,10 @@
 
-myapp <command> <option>
+myapp --help                                        displays help
 
-Usage:
+myapp init --all                                    creates the folder structure and config file
+myapp init --mk                                     creates the folder structure
+myapp init --cat                                    creates all the files with default settings
+                                                    such as dot json files and dot txt files
 
 myapp --help                            displays help
 myapp init --all                        creates the folder structure and config file

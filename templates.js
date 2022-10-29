@@ -26,68 +26,70 @@ const tokenjson = [
 
 const usagetxt = `
 
-myapp <command> <option>
+node myapp <command> <option>
 
 Usage:
 
-myapp --help                            displays help
-myapp init --all                        creates the folder structure and config file
-myapp init --mk                         creates the folder structure
-myapp init --cat                        creates all the files with default settings
-myapp config --show                     displays a list of the current config settings
-myapp config --reset                    resets the config file with default settings
-myapp config --set                      sets a specific config setting
-myapp token --count                     displays a count of the tokens created
-myapp token --list                      list all the usernames with tokens
-myapp token --new <username>            generates a token for a given username, saves tokens to the json file
-myapp token --upd p <username> <phone>  updates the json entry with phone number
-myapp token --upd e <username> <email>  updates the json entry with email
-myapp token --fetch <username>          fetches a user record for a given username
-myapp token --search u <username>       searches a token for a given username
-myapp token --search e <email>          searches a token for a given email
-myapp token --search p <phone>          searches a token for a given phone number
+myapp --help                                        displays help
+
+myapp init --all                                    creates the folder structure and config file
+myapp init --mk                                     creates the folder structure
+myapp init --cat                                    creates all the files with default settings
+                                                    such as dot json files and dot txt files
+
+myapp config --show                                 displays the current config settings
+myapp config --reset                                resets the config file with default settings
+myapp config --set    <attribute name> <new value>  sets a specific value to a named attribute
+myapp config --new    <attribute name>              adds a new attribute to the config file
+
+myapp token --count                                 displays a count of the tokens created
+myapp token --list                                  list all the usernames with tokens
+myapp token --new       <username>                  generates a token for a given username, saves tokens to the json file
+myapp token --fetch     <username>                  fetches a user record for a given username
+myapp token --search u  <username>                  searches a token for a given username
 
 `;
 
 const inittxt = `
 
-myapp init <command> <option>
+node myapp init <command>
 
 Usage:
 
-myapp init --all          creates the folder structure and config file
-myapp init --mk           creates the folder structure
-myapp init --cat          creates all the files with default settings
+myapp init --all                                    creates the folder structure and config file
+myapp init --mk                                     creates the folder structure
+myapp init --cat                                    creates all the files with default settings
+                                                    such as dot json files and dot txt files
 
 `;
 
 const configtxt = `
 
-myapp <command> <option>
+node myapp <command> <option> <option>
 
 Usage:
 
-myapp config --show     displays a list of the current config settings
-myapp config --reset    resets the config file with default settings
-myapp config --set      sets a specific config setting
+myapp config --show                                 displays the current config settings
+myapp config --reset                                resets the config file with default settings
+myapp config --set    <attribute name> <new value>  sets a specific value to a named attribute
+myapp config --new    <attribute name>              adds a new attribute to the config file
 
 `;
 
 const tokentxt = `
 
-myapp <command> <option>
+node myapp <command> <option>
 
 Usage:
 
-myapp token --count                     displays a count of the tokens created
-myapp token --list                      list all the usernames with tokens
-myapp token --new <username>            generates a token for a given username, saves tokens to the json file
-myapp token --upd p <username> <phone>  updates the json entry with phone number
-myapp token --upd e <username> <email>  updates the json entry with email
-myapp token --fetch <username>          fetches a user record for a given username
-myapp token --search u <username>       searches a token for a given username
-myapp token --search e <email>          searches a token for a given email
-myapp token --search p <phone>          searches a token for a given phone number
+myapp token --count                                 displays a count of the tokens created
+myapp token --list                                  list all the usernames with tokens
+myapp token --new       <username>                  generates a token for a given username, saves tokens to the json file
+myapp token --fetch     <username>                  fetches a user record for a given username
+myapp token --search u  <username>                  searches a token for a given username
+
+
+
 
 `;
 

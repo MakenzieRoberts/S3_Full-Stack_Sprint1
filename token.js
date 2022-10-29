@@ -7,6 +7,8 @@ class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 //  Import logger and set emitter
 const logEvents = require("./logEvents");
+//  Import logger and set emitter
+const logEvents = require("./logEvents");
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
 //  Dependencies for dates and hashing tokens
@@ -226,6 +228,7 @@ const searchToken = async function (username) {
   }
 };
 
+//  Command line interface application
 function tokenApp() {
   if (DEBUG) console.log("tokenApp()");
   myEmitter.emit(
@@ -246,8 +249,6 @@ function tokenApp() {
       break;
     case "--new":
       if (DEBUG) console.log("token.newToken() --new");
-      existCheck();
-      expiryCheck();
       newToken(myArgs[2]);
       break;
     case "--fetch":
@@ -258,8 +259,6 @@ function tokenApp() {
       if (DEBUG) console.log("token.searchToken()");
       searchToken(myArgs[3]);
       break;
-    case "--help":
-    case "--h":
     default:
       fs.readFile(__dirname + "/views/token.txt", (error, data) => {
         if (error) throw error;

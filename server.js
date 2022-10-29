@@ -1,3 +1,11 @@
+//  This file handles the server functionality.
+//  Please initialize app before running server (see myapp.js file)
+//  To use:
+//  Input "node server" to run web server.
+//  Navigate in a web browser to "localhost:3500"
+//  The webform will allow the user to generate, display and search tokens and user records.
+
+//  Import required modules
 const express = require("express");
 const app = express();
 const path = require("path");

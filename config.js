@@ -28,6 +28,7 @@ function setConfig() {
     if (error) throw error;
     if (DEBUG) console.log(JSON.parse(data));
     let cfg = JSON.parse(data);
+    // Check for correct input
     for (let key of Object.keys(cfg)) {
       if (key === myArgs[2]) {
         cfg[key] = myArgs[3];
@@ -44,6 +45,7 @@ function setConfig() {
         `invalid key: ${myArgs[2]}`
       );
     } else {
+      //  Update config file
       if (DEBUG) console.log(cfg);
       data = JSON.stringify(cfg, null, 2);
       fs.writeFile(__dirname + "/json/config.json", data, (error) => {
