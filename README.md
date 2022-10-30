@@ -24,6 +24,8 @@
 💾Logging:
    
  - Files are logged on a daily basis and use the following format:
+ - Template: YYYYMMDD 12:00:00 LOGGING_TITLE  module.FunctionName() Description of Event Emitted.....  {TOKEN STRING}
+ - Example: 20221030	20:28:34	TOKEN_WARNING	token.searchRecord()	Token for glen24 was NOT retrieved.	3f710779-d5eb-4601-af74-7be19b2f52d3
 
 
 🧪 Testing:
@@ -31,6 +33,7 @@
 - Expiry is handled by both the CLI and web form. Just edit the expiry date of a user object in the token.json array to a date in the past. If a token already exists for a username, but is expired at the time it is referenced, it will be deleted before it can be returned. If a new token is being requested, it will do so without error.
 
 👨‍🏫 TODO:
+
 - Add a function to clear database of expired tokens before they are called ⏰
 - Implement additional administrator functions in both web form and CLI 🤓
 - Serve custom URLs to our routes using the response parameters. ｛🤯｝
