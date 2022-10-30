@@ -22,12 +22,13 @@
 
 
 💾Logging:
-     Files are logged on a daily basis and use the following format:
-     ______________________
+   
+ - Files are logged on a daily basis and use the following format:
 
 
 🧪 Testing:
-    Expiry is handled by both the CLI and web form. Just edit the expiry date of a user object in the token.json array to a date in the past. If a token already exists for a username, but is expired at the time it is referenced, it will be deleted before it can be returned. If a new token is being requested, it will do so without error.
+
+- Expiry is handled by both the CLI and web form. Just edit the expiry date of a user object in the token.json array to a date in the past. If a token already exists for a username, but is expired at the time it is referenced, it will be deleted before it can be returned. If a new token is being requested, it will do so without error.
 
 👨‍🏫 TODO:
     - Add a function to clear database of expired tokens before they are called ⏰
@@ -38,18 +39,18 @@
 
 // CLI Commands
 
-myapp --help                            displays help
-myapp init --all                        creates the folder structure and config file
-myapp init --mk                         creates the folder structure
-myapp init --cat                        creates all the files with default settings
-myapp config --show                     displays a list of the current config settings
-myapp config --reset                    resets the config file with default settings
-myapp config --set                      sets a specific config setting
-myapp token --count                     displays a count of the tokens created
-myapp token --list                      list all the usernames with tokens
-myapp token --new <username>            generates a new token
-myapp token --fetch <username>          fetches a user record for a given username
-myapp token --search u <username>       searches a token for a given username
+- myapp --help                            displays help
+- myapp init --all                        creates the folder structure and config file
+- myapp init --mk                         creates the folder structure
+- myapp init --cat                        creates all the files with default settings
+- myapp config --show                     displays a list of the current config settings
+- myapp config --reset                    resets the config file with default settings
+- myapp config --set                      sets a specific config setting
+- myapp token --count                     displays a count of the tokens created
+- myapp token --list                      list all the usernames with tokens
+- myapp token --new <username>            generates a new token
+- myapp token --fetch <username>          fetches a user record for a given username
+- myapp token --search u <username>       searches a token for a given username
 
 
 
