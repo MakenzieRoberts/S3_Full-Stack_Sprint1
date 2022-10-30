@@ -1,9 +1,12 @@
+#
+
 # Logs
 logs
 *.log
 npm-debug.log*
 
 # Data
+json
 *.json
 
 # Dependency directories
