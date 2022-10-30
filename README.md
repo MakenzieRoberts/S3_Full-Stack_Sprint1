@@ -8,17 +8,17 @@
 
 🔐 How to use Command Line Interface: 
 
- *  1. Navigate to file directory containing app
- *  2. Type "npm i" to install required dependencies
- *  3. Type "node myapp init --all" to initialize and install application
- *  4. Type "node myapp" for a detailed list of commands that can be used.
+ *  Navigate to file directory containing app
+ *  Type "npm i" to install required dependencies
+ *  Type "node myapp init --all" to initialize and install application
+ *  Type "node myapp" for a detailed list of commands that can be used.
 
 🧑🏽‍💻 How to use web-server:
 
- *  1. In a new terminal, navigate to file directory containing app.
- *  2. Input "node server" to run web server.
- *  3. Navigate in a web browser to "localhost:3500"
- *  4. The webform will allow the user to generate, display and search tokens and user records.
+ *  In a new terminal, navigate to file directory containing app.
+ *  Input "node server" to run web server.
+ *  Navigate in a web browser to "localhost:3500"
+ *  The webform will allow the user to generate, display and search tokens and user records.
 
 
 💾Logging:
