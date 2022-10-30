@@ -24,8 +24,8 @@
 💾Logging:
    
  - Files are logged on a daily basis and use the following format:
- - Template: YYYYMMDD 12:00:00 LOGGING_TITLE  module.FunctionName() Description of Event Emitted.....  {TOKEN STRING}
- - Example: 20221030	20:28:34	TOKEN_WARNING	token.searchRecord()	Token for glen24 was NOT retrieved.	3f710779-d5eb-4601-af74-7be19b2f52d3
+ - Template: YYYYMMDD 12:00:00 LOGGING_LEVEL  module.FunctionName() Description of Event Emitted.....  {TOKEN STRING}
+ - Example:  20221030	20:28:34	TOKEN_WARNING	token.searchRecord()	Token for glen24 was NOT retrieved.	3f710779-d5eb-4601-af74-7be19b2f52d3
 
 
 🧪 Testing:
