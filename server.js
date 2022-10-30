@@ -20,10 +20,11 @@ app.use(express.json());
 // Manage static files like CSS and images
 app.use("/", express.static(path.join(__dirname, "/public")));
 
-//  Routing through tokenController modules (see tokenController.js)
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "./public/form.html"));
 });
+
+//  Routing through tokenController modules (see tokenController.js)
 app.post("/user", tokenController.createUser); // POST: new user
 app.get("/record", tokenController.fetchRecord); //  GET: user record
 app.get("/token", tokenController.getToken); //  GET: user token

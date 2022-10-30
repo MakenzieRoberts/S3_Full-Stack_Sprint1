@@ -1,10 +1,8 @@
 {
-  "name": "user",
+  "name": "AppConfigCLI",
   "version": "1.0.0",
-  "description": "The Command Line Interface (CLI) for MyApp.",
+  "description": "The Command Line Interface for MyApp.",
   "main": "myapp.js",
   "superuser": "adm1n",
-  "database": "Oct",
-  "cat": "",
-  "mouse": ""
+  "database": "exampledb"
 }

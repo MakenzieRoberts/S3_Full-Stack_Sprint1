@@ -6,7 +6,7 @@ const folders = ["json", "views", "logs"];
 const configjson = {
   name: "AppConfigCLI",
   version: "1.0.0",
-  description: "The Command Line Interface (CLI) for the MyApp.",
+  description: "The Command Line Interface for MyApp.",
   main: "myapp.js",
   superuser: "adm1n",
   database: "exampledb",

@@ -13,6 +13,7 @@ const createUser = async (req, res) => {
   const username = req.body.username; // NOTE: Data extracted from request body when using POST
   const result = await newToken(username);
   res.status(201).json(result);
+  
   myEmitter.emit(
     "log",
     "token.searchRecord()",

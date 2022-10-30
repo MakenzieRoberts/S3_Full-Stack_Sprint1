@@ -8,7 +8,6 @@ const myEmitter = new MyEmitter();
 //  Import logger and set emitter
 const logEvents = require("./logEvents");
 //  Import logger and set emitter
-const logEvents = require("./logEvents");
 myEmitter.on("log", (event, level, msg) => logEvents(event, level, msg));
 
 //  Dependencies for dates and hashing tokens
