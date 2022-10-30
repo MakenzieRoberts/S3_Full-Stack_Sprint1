@@ -31,10 +31,10 @@
 - Expiry is handled by both the CLI and web form. Just edit the expiry date of a user object in the token.json array to a date in the past. If a token already exists for a username, but is expired at the time it is referenced, it will be deleted before it can be returned. If a new token is being requested, it will do so without error.
 
 👨‍🏫 TODO:
-    - Add a function to clear database of expired tokens before they are called ⏰
-    - Implement additional administrator functions in both web form and CLI 🤓
-    - Serve custom URLs to our routes using the response parameters. ｛🤯｝
-    - Figure out how to style the returned JSON text for the local webserver. 🤔
+- Add a function to clear database of expired tokens before they are called ⏰
+- Implement additional administrator functions in both web form and CLI 🤓
+- Serve custom URLs to our routes using the response parameters. ｛🤯｝
+- Figure out how to style the returned JSON text for the local webserver. 🤔
 
 
 // CLI Commands
