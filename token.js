@@ -21,7 +21,7 @@ const tokenCount = () => {
   fs.readFile(__dirname + "/json/tokens.json", "utf-8", (error, data) => {
     if (error) throw error;
     let tokens = JSON.parse(data);
-    let count = tokens.length - 1;
+    let count = tokens.length;
     myEmitter.emit(
       "log",
       "token.tokenCount()",
