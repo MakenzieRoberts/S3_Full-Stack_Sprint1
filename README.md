@@ -14,7 +14,7 @@
  *  Type "node myapp" for a detailed list of commands that can be used.
 
 🧑🏽‍💻 How to use web-server:
-
+ *  Make sure you've installed the command line interface first!
  *  In a new terminal, navigate to file directory containing app.
  *  Input "node server" to run web server.
  *  Navigate in a web browser to "localhost:3500"
