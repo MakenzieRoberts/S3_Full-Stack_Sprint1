@@ -172,6 +172,12 @@ function createFolders() {
       if (!fs.existsSync(path.join(__dirname, element))) {
         fsPromises.mkdir(path.join(__dirname, element));
         mkcount++;
+        myEmitter.emit(
+          "log",
+          "init.createFolders()",
+          "INIT_INFO",
+          "Folders created."
+        );
       }
     } catch (err) {
       console.log(err);
@@ -179,6 +185,12 @@ function createFolders() {
   });
   if (mkcount === 0) {
     if (DEBUG) console.log("All folders already exist.");
+    myEmitter.emit(
+      "log",
+      "init.createFolders()",
+      "INIT_WARNING",
+      "Folders already exists."
+    );
   } else if (mkcount <= folders.length) {
     if (DEBUG)
       console.log(mkcount + " of " + folders.length + " folders were created.");
